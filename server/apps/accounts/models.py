@@ -1,0 +1,141 @@
+import uuid
+from django.db import models
+from django.db.models import Q
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django_countries.fields import CountryField
+from core.utils import normalize_phone_number
+from core.validators import (
+    validate_first_name, 
+    validate_last_name, 
+)      
+
+
+class UserManager(BaseUserManager):
+    
+    def create_user(
+        self,
+        first_name: str,
+        last_name: str,
+        country: str = 'US',
+        email: str | None = None,
+        phone_number: str | None = None,
+        **extra_fields
+    ):
+        first_name = first_name.strip()
+        last_name = last_name.strip()
+        
+        if email: 
+            email = self.normalize_email(email.strip().casefold())
+        else:
+            email = None
+            
+        if phone_number:
+            phone_number = normalize_phone_number(
+                phone_number,
+                country,
+            )
+        else:
+            phone_number = None
+                    
+        user = self.model(
+            country = country,
+            first_name = first_name,
+            last_name = last_name,
+            email = email,
+            phone_number = phone_number,
+            **extra_fields,
+        )
+        user.set_unusable_password()
+        user.full_clean()
+        
+        user.first_name = user.first_name[:1].upper() + user.first_name[1:]
+        user.last_name = user.last_name[:1].upper() + user.last_name[1:]
+        
+        user.save(using=self._db)
+        
+        return user
+
+class User(AbstractBaseUser):
+    
+    class Meta:
+        db_table = 'user'
+        verbose_name = 'User'
+        verbose_name_plural = 'Users'
+        
+        constraints = [
+            models.CheckConstraint(
+                condition=(
+                    Q(email__isnull=False) |
+                    Q(phone_number__isnull=False)
+                ),
+                name='user_requires_email_or_phone',
+            ),
+        ]
+    
+    id = models.UUIDField(
+        verbose_name = 'ID',
+        primary_key = True, 
+        default = uuid.uuid4, 
+        editable = False,
+    )
+    created_date = models.DateTimeField(
+        verbose_name = 'Created Date',
+        auto_now_add = True,
+    )
+    modified_date = models.DateTimeField(
+        verbose_name = 'Modified Date',
+        auto_now = True,
+    )
+    country = CountryField(
+        verbose_name = 'Country',
+        default = 'US',
+    )
+    first_name = models.CharField(
+        verbose_name = 'First Name',
+        max_length = 100,
+        validators = [
+            validate_first_name,
+        ]
+    )
+    last_name = models.CharField(
+        verbose_name = 'Last Name',
+        max_length = 100,
+        validators = [
+            validate_last_name,
+        ]
+    )
+    email = models.EmailField(
+        verbose_name = 'Email',
+        unique = True,
+        blank = True,
+        null = True,
+    )
+    phone_number = models.CharField(
+        verbose_name = 'Phone Number',
+        max_length = 16,
+        unique = True,
+        blank = True,
+        null = True,
+    )
+    is_enabled = models.BooleanField(
+        verbose_name = 'Enabled',
+        default = True,
+    )
+    last_login = models.DateTimeField(
+        verbose_name = 'Last Login',
+        blank = True,
+        null = True,
+    )
+    password = models.CharField(
+        verbose_name = 'Password',
+        max_length = 128,
+    )
+    
+    USERNAME_FIELD = 'id'
+
+    REQUIRED_FIELDS = [
+        'first_name',
+        'last_name',
+    ]
+
+    objects = UserManager()

@@ -21,10 +21,11 @@ def validate_last_name(value: str):
         "Please enter a valid last name"
     )
 
-def validate_phone_number(value: str):
-    good_input = re.fullmatch(r'^\s*[0-9]+\s*$', value)
+# def validate_phone_number(value: str):
+#     good_input = re.fullmatch(r'^\s*[0-9]+\s*$', value)
     
-    if not good_input:
-        raise ValidationError(
-            message = "Please enter numbers only."
-        )
+#     if not good_input:
+#         raise ValidationError(
+#             message = "Please enter numbers only."
+#         )
+        
