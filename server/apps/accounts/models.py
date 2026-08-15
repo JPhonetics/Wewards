@@ -1,9 +1,11 @@
 import uuid
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django_countries.fields import CountryField
-from core.utils import normalize_phone_number
+from phonenumber_field.modelfields import PhoneNumberField
+from phonenumber_field.phonenumber import PhoneNumber
 from core.validators import (
     validate_first_name, 
     validate_last_name, 
@@ -30,10 +32,13 @@ class UserManager(BaseUserManager):
             email = None
             
         if phone_number:
-            phone_number = normalize_phone_number(
+            phone_number = PhoneNumber.from_string(
                 phone_number,
-                country,
+                region=country,
             )
+
+            if not phone_number.is_valid():
+                raise ValidationError('Enter a valid phone number.')
         else:
             phone_number = None
                     
@@ -110,7 +115,7 @@ class User(AbstractBaseUser):
         blank = True,
         null = True,
     )
-    phone_number = models.CharField(
+    phone_number = PhoneNumberField(
         verbose_name = 'Phone Number',
         max_length = 16,
         unique = True,
