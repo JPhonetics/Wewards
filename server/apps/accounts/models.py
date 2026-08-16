@@ -2,7 +2,11 @@ import uuid
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import (
+    AbstractBaseUser, 
+    BaseUserManager, 
+    PermissionsMixin
+)
 from django_countries.fields import CountryField
 from phonenumber_field.modelfields import PhoneNumberField
 from phonenumber_field.phonenumber import PhoneNumber
@@ -59,8 +63,52 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         
         return user
+    
+    def create_staff_user(
+        self, 
+        first_name: str,
+        last_name: str,
+        password: str,
+        is_superuser: bool = False,
+        **extra_fields
+    ):
+        first_name = first_name.strip()
+        last_name = last_name.strip()
+        
+        extra_fields['is_staff'] = True
+        extra_fields['is_superuser'] = is_superuser
+        
+        staff = self.model(
+            first_name = first_name,
+            last_name = last_name,
+            **extra_fields,
+        )
+        staff.set_password(password)
+        staff.full_clean()
+        
+        staff.first_name = staff.first_name[:1].upper() + staff.first_name[1:]
+        staff.last_name = staff.last_name[:1].upper() + staff.last_name[1:]
+        
+        staff.save(using=self._db)
+        
+        return staff
+    
+    def create_superuser(
+        self, 
+        first_name: str,
+        last_name: str,
+        password: str,
+        **extra_fields
+    ):
+        return self.create_staff_user(
+            first_name = first_name,
+            last_name = last_name,
+            password = password,
+            is_superuser = True,
+            **extra_fields
+        )
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     
     class Meta:
         db_table = 'user'
@@ -71,9 +119,10 @@ class User(AbstractBaseUser):
             models.CheckConstraint(
                 condition=(
                     Q(email__isnull=False) |
-                    Q(phone_number__isnull=False)
+                    Q(phone_number__isnull=False) |
+                    Q(is_staff=True)
                 ),
-                name='user_requires_email_or_phone',
+                name='user_requires_contact_unless_staff',
             ),
         ]
     
@@ -122,9 +171,17 @@ class User(AbstractBaseUser):
         blank = True,
         null = True,
     )
-    is_enabled = models.BooleanField(
+    is_active = models.BooleanField(
         verbose_name = 'Enabled',
         default = True,
+    )
+    is_staff = models.BooleanField(
+        verbose_name = 'Staff',
+        default = False,
+    )
+    is_superuser = models.BooleanField(
+        verbose_name = 'Superuser',
+        default = False,
     )
     last_login = models.DateTimeField(
         verbose_name = 'Last Login',

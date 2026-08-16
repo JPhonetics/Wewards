@@ -26,18 +26,18 @@ class Business(models.Model):
         verbose_name = 'Modified Date',
         auto_now = True,
     )
-    business_name = models.CharField(
+    name = models.CharField(
         verbose_name = 'Business Name',
         max_length = 255,
     )
-    business_type = models.CharField(
-        verbose_name = 'Business Type',
+    industry = models.CharField(
+        verbose_name = 'Industry',
         max_length = 255,
     )
-    business_email = models.EmailField(
+    email = models.EmailField(
         verbose_name = 'Business Email',
     )
-    business_phone_number = PhoneNumberField(
+    phone_number = PhoneNumberField(
         verbose_name = 'Business Phone Number',
         max_length = 16,
     )
@@ -56,9 +56,9 @@ class Business(models.Model):
     
     def __str__(self):
         return (
-            f"Name:{self.business_name} - "
-            f"Type:{self.business_type} - "
-            f"Active:{self.is_active}"
+            f"Name: {self.name} - "
+            f"Industry: {self.industry} - "
+            f"Active: {self.is_active}"
         )
     
     
@@ -126,25 +126,25 @@ class BusinessLocation(models.Model):
     
     def __str__(self):
         return (
-            f"Business:{self.business.business_name} - "
-            f"Location:{self.location_name} - "
-            f"City:{self.city} State/Region:{self.state_region} - "
-            f"Active:{self.is_active}"
+            f"Business: {self.business.name} - "
+            f"Location: {self.location_name} - "
+            f"City: {self.city} State/Region: {self.state_region} - "
+            f"Active: {self.is_active}"
         )
     
 
-class BusinessUser(models.Model):
+class BusinessMembership(models.Model):
     
     class Meta:
-        db_table = 'business_user'
-        verbose_name = 'Business User'
-        verbose_name_plural = 'Business Users'
+        db_table = 'business_membership'
+        verbose_name = 'Business Membership'
+        verbose_name_plural = 'Business Memberships'
         
         # Prevents a user from being added to the same business more than once
         constraints = [
             models.UniqueConstraint(
                 fields = ['user', 'business'],
-                name = 'unique_user_business',
+                name = 'unique_business_user',
             )
         ]
         
@@ -162,13 +162,13 @@ class BusinessUser(models.Model):
     business = models.ForeignKey(
         Business,
         on_delete = models.CASCADE,
-        related_name = 'business_users',
+        related_name = 'business_memberships',
     )
     # References the configured AUTH_USER_MODEL set in settings.py
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete = models.CASCADE,
-        related_name = 'business_users',
+        related_name = 'business_memberships',
     )
     created_date = models.DateTimeField(
         verbose_name = 'Created Date',
@@ -190,8 +190,8 @@ class BusinessUser(models.Model):
     
     def __str__(self):
         return (
-            f"Business:{self.business.business_name} - "
-            f"Name:{self.user.first_name} {self.user.last_name} - "
-            f"Role:{self.get_role_display()} - "
-            f"Active:{self.is_active}"
+            f"Business: {self.business.name} - "
+            f"Name: {self.user.first_name} {self.user.last_name} - "
+            f"Role: {self.get_role_display()} - "
+            f"Active: {self.is_active}"
         )
