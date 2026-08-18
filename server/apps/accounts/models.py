@@ -16,7 +16,7 @@ from core.validators import (
 )      
 
 
-class UserManager(BaseUserManager):
+class AccountUserManager(BaseUserManager):
     
     def create_user(
         self,
@@ -25,7 +25,7 @@ class UserManager(BaseUserManager):
         country: str = 'US',
         email: str | None = None,
         phone_number: str | None = None,
-        **extra_fields
+        **extra_fields,
     ):
         first_name = first_name.strip()
         last_name = last_name.strip()
@@ -108,10 +108,10 @@ class UserManager(BaseUserManager):
             **extra_fields
         )
 
-class User(AbstractBaseUser, PermissionsMixin):
+class AccountUser(AbstractBaseUser, PermissionsMixin):
     
     class Meta:
-        db_table = 'user'
+        db_table = 'account_user'
         verbose_name = 'User'
         verbose_name_plural = 'Users'
         
@@ -200,4 +200,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         'last_name',
     ]
 
-    objects = UserManager()
+    objects = AccountUserManager()
+    
+    def __str__(self):
+        return (
+            f"Name: {self.first_name} {self.last_name} - "
+            f"Email: {self.email} - "
+            f"Phone Number: {self.phone_number} - "
+            f"Active: {self.is_active}"
+        )

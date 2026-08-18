@@ -4,6 +4,11 @@ from django_countries.fields import CountryField
 from django.conf import settings 
 from phonenumber_field.modelfields import PhoneNumberField
 from timezone_field import TimeZoneField
+from core.choices import (
+    BusinessRoleChoices,
+    ItemStatusChoices,
+    UserStatusChoices,
+)
 
 class Business(models.Model):
     
@@ -88,7 +93,7 @@ class BusinessLocation(models.Model):
         verbose_name = 'Modified Date',
         auto_now = True,
     )
-    location_name = models.CharField(
+    name = models.CharField(
         verbose_name = 'Location Name',
         max_length = 255,
     )
@@ -127,48 +132,37 @@ class BusinessLocation(models.Model):
     def __str__(self):
         return (
             f"Business: {self.business.name} - "
-            f"Location: {self.location_name} - "
+            f"Location: {self.name} - "
             f"City: {self.city} State/Region: {self.state_region} - "
             f"Active: {self.is_active}"
         )
     
 
-class BusinessMembership(models.Model):
+class BusinessStaff(models.Model):
     
     class Meta:
-        db_table = 'business_membership'
-        verbose_name = 'Business Membership'
-        verbose_name_plural = 'Business Memberships'
+        db_table = 'business_staff'
+        verbose_name = 'Business Staff'
+        verbose_name_plural = 'Business Staff'
         
-        # Prevents a user from being added to the same business more than once
         constraints = [
+            # Prevents a user from being added to the same business more than once
             models.UniqueConstraint(
-                fields = ['user', 'business'],
+                fields = ['business', 'user'],
                 name = 'unique_business_user',
-            )
+            ),
+            # Prevents the same email being used at the same business
+            models.UniqueConstraint(
+                fields=['business', 'email'],
+                name='unique_business_staff_email',
+            ),
         ]
-        
-    class BusinessRoles(models.TextChoices):
-        ADMIN = 'admin', 'Admin'
-        MANAGER = 'manager', 'Manager'
-        EMPLOYEE = 'employee', 'Employee'
         
     id = models.UUIDField(
         verbose_name = 'ID',
         primary_key = True, 
         default = uuid.uuid4, 
         editable = False,
-    )
-    business = models.ForeignKey(
-        Business,
-        on_delete = models.CASCADE,
-        related_name = 'business_memberships',
-    )
-    # References the configured AUTH_USER_MODEL set in settings.py
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete = models.CASCADE,
-        related_name = 'business_memberships',
     )
     created_date = models.DateTimeField(
         verbose_name = 'Created Date',
@@ -178,14 +172,30 @@ class BusinessMembership(models.Model):
         verbose_name = 'Modified Date',
         auto_now = True,
     )
+    business = models.ForeignKey(
+        Business,
+        on_delete = models.CASCADE,
+        related_name = 'staff',
+    )
+    # References the configured AUTH_USER_MODEL set in settings.py
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete = models.CASCADE,
+        related_name = 'business_staff',
+    )
+    email = models.EmailField(
+        verbose_name='Staff Email',
+    )
     role = models.CharField(
         verbose_name = 'Role',
         max_length = 20,
-        choices = BusinessRoles.choices,
+        choices = BusinessRoleChoices.choices,
     )
-    is_active = models.BooleanField(
-        verbose_name = 'Active',
-        default = True,
+    status = models.CharField(
+        verbose_name = 'Status',
+        max_length = 25,
+        choices = UserStatusChoices.choices,
+        default = UserStatusChoices.PENDING,
     )
     
     def __str__(self):
@@ -193,5 +203,58 @@ class BusinessMembership(models.Model):
             f"Business: {self.business.name} - "
             f"Name: {self.user.first_name} {self.user.last_name} - "
             f"Role: {self.get_role_display()} - "
-            f"Active: {self.is_active}"
+            f"Status: {self.get_status_display()}"
+        )
+        
+        
+class BusinessItem(models.Model):
+    
+    class Meta:
+        db_table = 'business_item'
+        verbose_name = 'Business Item'
+        verbose_name_plural = 'Business Items'
+       
+    id = models.BigAutoField(
+        verbose_name='ID',
+        primary_key=True,
+    )
+    created_date = models.DateTimeField(
+        verbose_name = 'Created Date',
+        auto_now_add = True,
+    )
+    modified_date = models.DateTimeField(
+        verbose_name = 'Modified Date',
+        auto_now = True,
+    )
+    business = models.ForeignKey(
+        Business,
+        on_delete = models.CASCADE,
+        related_name = 'items'
+    )
+    name = models.CharField(
+        verbose_name = 'Name',
+        max_length = 255,
+    )
+    description = models.TextField(
+        verbose_name = 'Description',
+        max_length = 255,
+        blank = True,
+    )
+    status = models.CharField(
+        verbose_name = 'Status',
+        max_length = 25,
+        choices = ItemStatusChoices.choices,
+        default = ItemStatusChoices.DRAFT,
+    )
+    discontinued_date = models.DateTimeField(
+        verbose_name = 'Discontinued Date',
+        blank = True,
+        null = True,
+    )
+    
+    def __str__(self):
+        return (
+            f"Business: {self.business.name} - "
+            f"Item: {self.name} - "
+            f"Status: {self.get_status_display()}"
         )

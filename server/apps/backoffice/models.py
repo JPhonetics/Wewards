@@ -1,42 +1,76 @@
 import uuid
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import BaseUserManager
 from django.db import models
 from django.core.exceptions import ValidationError
-from .validators import validate_staff_email  
+from .validators import validate_platform_admin_email 
+from core.choices import UserStatusChoices
             
             
-class StaffProfileManager(BaseUserManager):
+class PlatformAdminManager(BaseUserManager):
     
-    def create_staff_profile(
+    def get_account_user(
         self,
         user_id: uuid.UUID,
-        staff_email: str,
+    ):
+        
+        # Grabs and assigns AUTH_USER_MODEL in settings.py
+        AuthModel = get_user_model()
+        
+        try:
+            confirmed_user = AuthModel.objects.get(id = user_id)
+            
+        except AuthModel.DoesNotExist:
+            raise ValidationError(
+                "Unable to locate account user profile."
+            )
+
+        return confirmed_user
+    
+    def check_staff_flag(
+        self,
+        user,
+    ):
+        if not user.is_staff:
+            raise ValidationError(
+                "Platform Admin requires is_staff True."
+            )
+    
+    def create_platform_admin(
+        self,
+        user_id: uuid.UUID,
+        admin_email: str,
         role: str,
         **extra_fields
     ):
-        staff_email = self.normalize_email(staff_email.strip().casefold())
+        user = self.get_account_user(user_id)
         
-        profile = self.model(
-            user_id = user_id,
-            email = staff_email,
+        self.check_staff_flag(user)
+        
+        admin_email = self.normalize_email(admin_email.strip().casefold())
+        
+        admin = self.model(
+            user = user,
+            email = admin_email,
             role = role,
             **extra_fields,
         )
         
-        profile.full_clean()
-        profile.save(using=self._db)
+        admin.full_clean()
+        admin.save(using=self._db)
         
-        return profile
+        return admin
+            
 
-class StaffProfile(models.Model):
+class PlatformAdmin(models.Model):
     
     class Meta:
-        db_table = 'backoffice_staff_profile'
-        verbose_name = 'Staff Profile'
-        verbose_name_plural = 'Staff Profiles'
+        db_table = 'platform_admin'
+        verbose_name = 'Platform Admin'
+        verbose_name_plural = 'Platform Admins'
         
-    class StaffRoles(models.TextChoices):
+    class PlatformAdminRoles(models.TextChoices):
         ADMIN = 'admin', 'Admin'
         SUPPORT = 'support', 'Support'
     
@@ -46,12 +80,6 @@ class StaffProfile(models.Model):
         default = uuid.uuid4, 
         editable = False,
     )
-    # References the configured AUTH_USER_MODEL set in settings.py
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        on_delete = models.CASCADE,
-        related_name = 'staff_profile',
-    )
     created_date = models.DateTimeField(
         verbose_name = 'Created Date',
         auto_now_add = True,
@@ -60,36 +88,45 @@ class StaffProfile(models.Model):
         verbose_name = 'Modified Date',
         auto_now = True,
     )
+    # References AUTH_USER_MODEL in settings.py
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete = models.CASCADE,
+        related_name = 'platform_admin',
+    )
     email = models.EmailField(
-        verbose_name = 'Staff Email',
+        verbose_name = 'Admin Email',
         unique = True,
         validators = [
-            validate_staff_email,
+            validate_platform_admin_email,
         ]
     )
     role = models.CharField(
         verbose_name = 'Role',
         max_length = 20,
-        choices = StaffRoles.choices,
+        choices = PlatformAdminRoles.choices,
     )
-    is_active = models.BooleanField(
-        verbose_name = 'Active',
-        default = True,
+    status = models.CharField(
+        verbose_name = 'Status',
+        max_length = 25,
+        choices = UserStatusChoices.choices,
+        default = UserStatusChoices.PENDING,
     )
     
-    objects = StaffProfileManager()
+    objects = PlatformAdminManager()
     
     def __str__(self):
         return (
             f"Name: {self.user.first_name} {self.user.last_name} - "
             f"Role: {self.get_role_display()} - "
-            f"Active: {self.is_active}"
+            f"Status: {self.get_status_display()}"
         )
         
+    # Final validation ensuring linked user is staff
     def clean(self):
         super().clean()
 
         if self.user_id and not self.user.is_staff:
             raise ValidationError(
-                "Staff profile requires is_staff True."
+                "Platform Admin requires is_staff True."
             )
