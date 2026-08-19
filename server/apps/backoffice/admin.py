@@ -26,6 +26,13 @@ class PlatformAdminAdmin(admin.ModelAdmin):
 
     model = PlatformAdmin
     
+    # Drop down to select primary records
+    def get_fieldsets(self, request, obj = None):
+        if obj is None:
+            return self.add_fieldsets
+
+        return self.fieldsets
+    
     list_display = [
         'email',
         'role',
@@ -49,7 +56,6 @@ class PlatformAdminAdmin(admin.ModelAdmin):
         'id',
         'created_date',
         'modified_date',
-        'user',
     ]
     
     fieldsets = (
@@ -89,6 +95,7 @@ class PlatformAdminAdmin(admin.ModelAdmin):
                     'wide',
                 ),
                 'fields': (
+                    'user',
                     'email',
                     'role',
                     'status',

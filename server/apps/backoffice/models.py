@@ -1,32 +1,14 @@
 import uuid
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import BaseUserManager
 from django.db import models
 from django.core.exceptions import ValidationError
 from .validators import validate_platform_admin_email 
 from core.choices import UserStatusChoices
+from core.lookups import get_account_user
             
             
 class PlatformAdminManager(BaseUserManager):
-    
-    def get_account_user(
-        self,
-        user_id: uuid.UUID,
-    ):
-        
-        # Grabs and assigns AUTH_USER_MODEL in settings.py
-        AuthModel = get_user_model()
-        
-        try:
-            confirmed_user = AuthModel.objects.get(id = user_id)
-            
-        except AuthModel.DoesNotExist:
-            raise ValidationError(
-                "Unable to locate account user profile."
-            )
-
-        return confirmed_user
     
     def check_staff_flag(
         self,
@@ -44,7 +26,7 @@ class PlatformAdminManager(BaseUserManager):
         role: str,
         **extra_fields
     ):
-        user = self.get_account_user(user_id)
+        user = get_account_user(user_id)
         
         self.check_staff_flag(user)
         
@@ -91,7 +73,7 @@ class PlatformAdmin(models.Model):
     # References AUTH_USER_MODEL in settings.py
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
-        on_delete = models.CASCADE,
+        on_delete = models.PROTECT,
         related_name = 'platform_admin',
     )
     email = models.EmailField(

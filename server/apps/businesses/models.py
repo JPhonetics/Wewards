@@ -1,7 +1,8 @@
 import uuid
 from django.db import models
+from django.contrib.auth.models import BaseUserManager
 from django_countries.fields import CountryField
-from django.conf import settings 
+from django.conf import settings
 from phonenumber_field.modelfields import PhoneNumberField
 from timezone_field import TimeZoneField
 from core.choices import (
@@ -9,6 +10,41 @@ from core.choices import (
     ItemStatusChoices,
     UserStatusChoices,
 )
+from core.lookups import (
+    get_account_user,
+    get_business,
+)
+
+
+class BusinessStaffManager(BaseUserManager):
+    
+    def create_business_staff(
+        self,
+        business_id: uuid.UUID,
+        user_id: uuid.UUID,
+        staff_email: str,
+        role: str,
+        **extra_fields
+    ):
+        business = get_business(business_id)
+        
+        user = get_account_user(user_id)
+        
+        staff_email = self.normalize_email(staff_email.strip().casefold())
+        
+        staff = self.model(
+            business = business,
+            user = user,
+            email = staff_email,
+            role = role,
+            **extra_fields,
+        )
+        
+        staff.full_clean()
+        staff.save(using=self._db)
+        
+        return staff
+
 
 class Business(models.Model):
     
@@ -197,6 +233,8 @@ class BusinessStaff(models.Model):
         choices = UserStatusChoices.choices,
         default = UserStatusChoices.PENDING,
     )
+
+    objects = BusinessStaffManager()
     
     def __str__(self):
         return (

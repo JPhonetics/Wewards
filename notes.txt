@@ -30,3 +30,8 @@ Would like:
 
 
 Completed:
+
+
+Notes:
+    - Admin portal, adding business requires +1, likely need to add country and allow formatting
+    

@@ -67,15 +67,210 @@ class BusinessItemForm(forms.ModelForm):
         fields = '__all__'
         
 
+## Business Admin Portal
+class BusinessAdmin(admin.ModelAdmin):
+
+    add_form = BusinessAddForm
+    form = BusinessForm
+
+    model = Business
+    
+    list_display = [
+        'name',
+        'industry',
+        'email',
+        'phone_number',
+        'website',
+        'is_active',
+    ]
+    
+    list_filter = [
+        'is_active',
+    ]
+    
+    search_fields = [
+        'name',
+        'industry',
+    ]
+    
+    ordering = [
+        'name',
+    ]
+    
+    readonly_fields = [
+        'id',
+        'created_date',
+        'modified_date',
+        'is_active',
+    ]
+    
+    fieldsets = (
+        (
+            'Dates',
+            {
+                'fields': (
+                    'created_date',
+                    'modified_date',
+                )
+            },
+        ),
+        (
+            'Business Information',
+            {
+                'fields': (
+                    'name',
+                    'industry',
+                    'email',
+                    'phone_number',
+                    'website',
+                    'logo',
+                )
+            },
+        ),
+        (
+            'Status',
+            {
+                'fields': (
+                    'is_active',
+                )
+            },
+        ),
+    )
         
-@admin.register(PlatformAdmin)
+    add_fieldsets = (
+        (
+            'Create Business',
+            {
+                'classes': (
+                    'wide',
+                ),
+                'fields': (
+                    'name',
+                    'industry',
+                    'email',
+                    'phone_number',
+                    'website',
+                    'logo',
+                ),
+            },
+        ),
+    )
+    
+    
+## Business Location Admin Portal
+class BusinessLocationAdmin(admin.ModelAdmin):
 
-class PlatformAdminAdmin(admin.ModelAdmin):
+    add_form = BusinessLocationAddForm
+    form = BusinessLocationForm
 
-    add_form = PlatformAddForm
-    form = PlatformAdminForm
+    model = BusinessLocation
+    
+    def get_fieldsets(self, request, obj = None):
+        if obj is None:
+            return self.add_fieldsets
 
-    model = PlatformAdmin
+        return self.fieldsets
+    
+    list_display = [
+        'name',
+        'address_line_1',
+        'city',
+        'state_region',
+        'postal_code',
+    ]
+    
+    list_filter = [
+        'is_active',
+    ]
+    
+    search_fields = [
+        'name',
+        'city',
+        'state_region'
+    ]
+    
+    ordering = [
+        'name',
+    ]
+    
+    readonly_fields = [
+        'id',
+        'created_date',
+        'modified_date',
+    ]
+    
+    fieldsets = (
+        (
+            'Dates',
+            {
+                'fields': (
+                    'created_date',
+                    'modified_date',
+                )
+            },
+        ),
+        (
+            'Business Information',
+            {
+                'fields': (
+                    'name',
+                    'address_line_1',
+                    'address_line_2',
+                    'city',
+                    'state_region',
+                    'postal_code',
+                    'country',
+                    'timezone',
+                )
+            },
+        ),
+        (
+            'Status',
+            {
+                'fields': (
+                    'is_active',
+                )
+            },
+        ),
+    )
+        
+    add_fieldsets = (
+        (
+            'Create Business Location',
+            {
+                'classes': (
+                    'wide',
+                ),
+                'fields': (
+                    'business',
+                    'name',
+                    'address_line_1',
+                    'address_line_2',
+                    'city',
+                    'state_region',
+                    'postal_code',
+                    'country',
+                    'timezone',
+                ),
+            },
+        ),
+    )
+    
+    
+## Business Staff Admin Portal
+class BusinessStaffAdmin(admin.ModelAdmin):
+
+    add_form = BusinessStaffAddForm
+    form = BusinessStaffForm
+
+    model = BusinessStaff
+    
+    # Drop down to select primary records
+    def get_fieldsets(self, request, obj = None):
+        if obj is None:
+            return self.add_fieldsets
+
+        return self.fieldsets
     
     list_display = [
         'email',
@@ -100,7 +295,6 @@ class PlatformAdminAdmin(admin.ModelAdmin):
         'id',
         'created_date',
         'modified_date',
-        'user',
     ]
     
     fieldsets = (
@@ -114,19 +308,19 @@ class PlatformAdminAdmin(admin.ModelAdmin):
             },
         ),
         (
-            'Platform Admin Information',
+            'Business Staff Information',
             {
                 'fields': (
-                    'status',
                     'email',
+                    'role',
                 )
             },
         ),
         (
-            'Role',
+            'Status',
             {
                 'fields': (
-                    'role',
+                    'status',
                 )
             },
         ),
@@ -134,12 +328,14 @@ class PlatformAdminAdmin(admin.ModelAdmin):
         
     add_fieldsets = (
         (
-            'Create Platform Admin',
+            'Create Business Staff',
             {
                 'classes': (
                     'wide',
                 ),
                 'fields': (
+                    'business',
+                    'user',
                     'email',
                     'role',
                     'status',
@@ -147,3 +343,95 @@ class PlatformAdminAdmin(admin.ModelAdmin):
             },
         ),
     )
+    
+    
+## Business Location Admin Portal
+class BusinessItemAdmin(admin.ModelAdmin):
+
+    add_form = BusinessItemAddForm
+    form = BusinessItemForm
+
+    model = BusinessItem
+    
+    def get_fieldsets(self, request, obj = None):
+        if obj is None:
+            return self.add_fieldsets
+
+        return self.fieldsets
+    
+    list_display = [
+        'name',
+        'status',
+        'discontinued_date',
+    ]
+    
+    list_filter = [
+        'status',
+    ]
+    
+    search_fields = [
+        'name',
+    ]
+    
+    ordering = [
+        'name',
+    ]
+    
+    readonly_fields = [
+        'id',
+        'created_date',
+        'modified_date',
+    ]
+    
+    fieldsets = (
+        (
+            'Dates',
+            {
+                'fields': (
+                    'created_date',
+                    'modified_date',
+                )
+            },
+        ),
+        (
+            'Business Item Information',
+            {
+                'fields': (
+                    'name',
+                    'description',
+                )
+            },
+        ),
+        (
+            'Status',
+            {
+                'fields': (
+                    'status',
+                    'discontinued_date',
+                )
+            },
+        ),
+    )
+        
+    add_fieldsets = (
+        (
+            'Create Business Item',
+            {
+                'classes': (
+                    'wide',
+                ),
+                'fields': (
+                    'business',
+                    'name',
+                    'description',
+                    'status',
+                ),
+            },
+        ),
+    )
+    
+    
+admin.site.register(Business, BusinessAdmin)
+admin.site.register(BusinessLocation, BusinessLocationAdmin)
+admin.site.register(BusinessStaff, BusinessStaffAdmin)
+admin.site.register(BusinessItem, BusinessItemAdmin)
