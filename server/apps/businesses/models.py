@@ -67,6 +67,10 @@ class Business(models.Model):
         verbose_name = 'Modified Date',
         auto_now = True,
     )
+    country = CountryField(
+        verbose_name = 'Country',
+        default = 'US',
+    )
     name = models.CharField(
         verbose_name = 'Business Name',
         max_length = 255,

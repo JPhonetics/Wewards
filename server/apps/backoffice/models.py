@@ -108,7 +108,7 @@ class PlatformAdmin(models.Model):
     def clean(self):
         super().clean()
 
-        if self.user_id and not self.user.is_staff:
+        if not self.user.is_staff:
             raise ValidationError(
                 "Platform Admin requires is_staff True."
             )

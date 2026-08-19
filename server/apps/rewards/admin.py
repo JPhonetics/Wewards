@@ -544,6 +544,8 @@ class RewardAdjustmentAdmin(admin.ModelAdmin):
                     'user',
                     'reward_program',
                     'location',
+                    'adjusted_by_staff',
+                    'adjusted_by_admin',
                     'adjustment_type',
                     'reward',
                     'adjustment_amount',

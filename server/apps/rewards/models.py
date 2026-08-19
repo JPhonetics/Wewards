@@ -1,5 +1,6 @@
 import uuid
 from django.db import models
+from django.core.exceptions import ValidationError
 from apps.accounts.models import AccountUser
 from apps.backoffice.models import PlatformAdmin
 from apps.businesses.models import (
@@ -162,6 +163,15 @@ class RewardProgramLocation(models.Model):
             f"Program Name: {self.reward_program.name}"
         )
     
+    # Final validation ensuring Program and Location belong to the same business
+    def clean(self):
+        super().clean()
+
+        if self.reward_program.business_id != self.location.business_id:
+            raise ValidationError(
+                "Reward Program and Business Location must belong to the same business."
+            )
+    
 
 class Reward(models.Model):
     
@@ -253,6 +263,27 @@ class Reward(models.Model):
             f"Amount Required: {self.amount_required} - "
             f"Reward Item: {self.earned_item.name}"
         )
+    
+    def clean(self):
+        super().clean()
+        
+        business_id = self.reward_program.business_id
+
+        if (
+            self.qualifying_item
+            and business_id != self.qualifying_item.business_id
+        ):
+            raise ValidationError(
+                "Reward Program and Qualifying Item must belong to the same business."
+            )   
+
+        if (
+            self.earned_item
+            and business_id != self.earned_item.business_id
+        ):
+            raise ValidationError(
+                "Reward Program and Earned Item must belong to the same business."
+            )   
         
 
 class RewardLocation(models.Model):
@@ -297,6 +328,14 @@ class RewardLocation(models.Model):
             f"Reward: {self.reward.name} - "
             f"Location: {self.location.name}"
         )
+        
+    def clean(self):
+        super().clean()
+
+        if self.reward.reward_program.business_id != self.location.business_id:
+            raise ValidationError(
+                "Reward and Business Location must belong to the same business."
+            )
         
 
 class RewardEarning(models.Model):
@@ -374,6 +413,35 @@ class RewardEarning(models.Model):
             f"Reward Program: {self.reward_program.name} - "
             f"Earned: {self.amount_earned}"
         )
+        
+    def clean(self):
+        super().clean()
+        
+        business_id = self.reward_program.business_id
+
+        if (
+            self.location
+            and business_id != self.location.business_id
+        ):
+            raise ValidationError(
+                "Reward Program and Business Location must belong to the same business."
+            )   
+            
+        if (
+            self.granted_by_staff
+            and business_id != self.granted_by_staff.business_id
+        ):
+            raise ValidationError(
+                "Reward Program and Staff Member must belong to the same business."
+            )   
+
+        if (
+            self.reward
+            and self.reward_program_id != self.reward.reward_program_id
+        ):
+            raise ValidationError(
+                "Reward Program and Reward Item must belong to the same business."
+            )   
 
 class RewardAdjustment(models.Model):
     
@@ -455,7 +523,46 @@ class RewardAdjustment(models.Model):
             f"Reason: {self.reason} - "
             f"Adjusted: {self.adjustment_amount}"
         )
-    
+        
+    def clean(self):
+        super().clean()
+        
+        business_id = self.reward_program.business_id
+
+        if (
+            self.location
+            and business_id != self.location.business_id
+        ):
+            raise ValidationError(
+                "Reward Program and Business Location must belong to the same business."
+            )   
+            
+        if (
+            self.adjusted_by_staff
+            and business_id != self.adjusted_by_staff.business_id
+        ):
+            raise ValidationError(
+                "Reward Program and Staff Member must belong to the same business."
+            )   
+
+        if (
+            self.reward
+            and self.reward_program_id != self.reward.reward_program_id
+        ):
+            raise ValidationError(
+                "Reward Program and Reward Item must belong to the same business."
+            )
+
+        if not self.adjusted_by_staff and not self.adjusted_by_admin:
+            raise ValidationError(
+                "Reward Adjustment must be adjusted by either staff or a platform admin."
+        )
+            
+        if self.adjusted_by_staff and self.adjusted_by_admin:
+            raise ValidationError(
+                "Reward Adjustment cannot be adjusted by both staff and a platform admin."
+            )
+
 
 class RewardRedemption(models.Model):
     
@@ -517,3 +624,32 @@ class RewardRedemption(models.Model):
             f"Reward Program: {self.reward_program.name} - "
             f"Redeemed For: {self.reward.name}"
         )
+
+    def clean(self):
+        super().clean()
+        
+        business_id = self.reward_program.business_id
+
+        if (
+            self.location
+            and business_id != self.location.business_id
+        ):
+            raise ValidationError(
+                "Reward Program and Business Location must belong to the same business."
+            )   
+            
+        if (
+            self.processed_by_staff
+            and business_id != self.processed_by_staff.business_id
+        ):
+            raise ValidationError(
+                "Reward Program and Staff Member must belong to the same business."
+            )   
+
+        if (
+            self.reward
+            and self.reward_program_id != self.reward.reward_program_id
+        ):
+            raise ValidationError(
+                "Reward Program and Reward Item must belong to the same business."
+            )   

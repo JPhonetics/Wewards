@@ -3,9 +3,9 @@ Wewards, rewarding the relationship that keep businesses growing. Reward valued 
 Let's reward customers that order the "usus" (usual). Most rewards programs reward points on total spend. Customers are allowed to redeem those points on specific rewards outlined by the company. What if we track the number of times a particular customer orders a specific item. And after a set amount of times we reward them with a free item. For example, a customer has ordered pho on each of their 10 visits. On their next visit, the pho is on us.
 
 User Types:
+- Customers
 - Platform Admins
 - Business Employees
-- Customers
 
 All users will have a user account. Additional auth method for business and platform admin users.
 
@@ -34,4 +34,5 @@ Completed:
 
 Notes:
     - Admin portal, adding business requires +1, likely need to add country and allow formatting
+        - same for user, 
     - Need to add cross validations so the users belong to the proper business, reward, program, etc.
