@@ -1,0 +1,32 @@
+Wewards, rewarding the relationship that keep businesses growing. Reward valued customers with a free items after accumulating points based on spend or after buying specific items a set number of times. 
+
+Let's reward customers that order the "usus" (usual). Most rewards programs reward points on total spend. Customers are allowed to redeem those points on specific rewards outlined by the company. What if we track the number of times a particular customer orders a specific item. And after a set amount of times we reward them with a free item. For example, a customer has ordered pho on each of their 10 visits. On their next visit, the pho is on us.
+
+User Types:
+- Platform Admins
+- Business Employees
+- Customers
+
+All users will have a user account. Additional auth method for business and platform admin users.
+
+Reward Types:
+    - Points
+    - Punch Card (Buy x Get y)
+
+Must Complete:
+    - Stripe Billing
+    - Google Businesses in React
+    - Django Tests
+        - Insert user into account_user
+    - React Tests
+
+
+Would like:
+    - Separate Auth for platform admins and business users, but using the same login portal
+        - Similar to UltiPro, users with multiple profiles select which profile they are logging in as as successful login.
+        - Users login using phone number or email.
+        - Business Users will have a User account, but separate email for the business account.
+        - Platform Users will operate similar to Business Users, but auth using a Corp email.
+
+
+Completed:

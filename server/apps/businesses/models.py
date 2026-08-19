@@ -153,8 +153,8 @@ class BusinessStaff(models.Model):
             ),
             # Prevents the same email being used at the same business
             models.UniqueConstraint(
-                fields=['business', 'email'],
-                name='unique_business_staff_email',
+                fields = ['business', 'email'],
+                name = 'unique_business_staff_email',
             ),
         ]
         

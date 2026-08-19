@@ -38,7 +38,7 @@ class AccountUserManager(BaseUserManager):
         if phone_number:
             phone_number = PhoneNumber.from_string(
                 phone_number,
-                region=country,
+                region = country,
             )
 
             if not phone_number.is_valid():
@@ -117,12 +117,12 @@ class AccountUser(AbstractBaseUser, PermissionsMixin):
         
         constraints = [
             models.CheckConstraint(
-                condition=(
-                    Q(email__isnull=False) |
-                    Q(phone_number__isnull=False) |
-                    Q(is_staff=True)
+                condition = (
+                    Q(email__isnull = False) |
+                    Q(phone_number__isnull = False) |
+                    Q(is_staff = True)
                 ),
-                name='user_requires_contact_unless_staff',
+                name = 'user_requires_contact_unless_staff',
             ),
         ]
     
@@ -193,7 +193,7 @@ class AccountUser(AbstractBaseUser, PermissionsMixin):
         max_length = 128,
     )
     
-    USERNAME_FIELD = 'id'
+    USERNAME_FIELD = 'email'
 
     REQUIRED_FIELDS = [
         'first_name',

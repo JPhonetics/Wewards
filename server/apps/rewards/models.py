@@ -234,17 +234,12 @@ class Reward(models.Model):
     )
         
     def __str__(self):
-        qualifying_name = (self.qualifying_item.name if self.qualifying_item 
-            else "None")
-        earned_name = (self.earned_item.name if self.earned_item 
-            else "None")
-        
         return (
             f"Name: {self.name} - "
             f"Type: {self.get_reward_type_display()} - "
-            f"Qualifying Item: {qualifying_name} - "
+            f"Qualifying Item: {self.qualifying_item.name} - "
             f"Amount Required: {self.amount_required} - "
-            f"Reward Item: {earned_name}"
+            f"Reward Item: {self.earned_item.name}"
         )
         
 
@@ -257,8 +252,8 @@ class RewardLocation(models.Model):
         
         constraints = [
             models.UniqueConstraint(
-                fields=['reward', 'location'],
-                name='unique_reward_location',
+                fields = ['reward', 'location'],
+                name = 'unique_reward_location',
             ),
         ]
         
