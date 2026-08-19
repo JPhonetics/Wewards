@@ -26,6 +26,14 @@ class RewardProgramType(models.Model):
         verbose_name='ID',
         primary_key=True,
     )
+    created_date = models.DateTimeField(
+        verbose_name = 'Created Date',
+        auto_now_add = True,
+    )
+    modified_date = models.DateTimeField(
+        verbose_name = 'Modified Date',
+        auto_now = True,
+    )
     name = models.CharField(
         verbose_name = 'Name',
         max_length = 25,
@@ -113,8 +121,8 @@ class RewardProgramLocation(models.Model):
     
     class Meta:
         db_table = 'reward_program_location'
-        verbose_name = 'Reward Program Location'
-        verbose_name_plural = 'Reward Program Locations'
+        verbose_name = 'Participating Reward Program Location'
+        verbose_name_plural = 'Participating Reward Program Locations'
         
         constraints = [
             models.UniqueConstraint(
@@ -130,6 +138,10 @@ class RewardProgramLocation(models.Model):
     created_date = models.DateTimeField(
         verbose_name = 'Created Date',
         auto_now_add = True,
+    )
+    modified_date = models.DateTimeField(
+        verbose_name = 'Modified Date',
+        auto_now = True,
     )
     reward_program = models.ForeignKey(
         RewardProgram,
@@ -247,8 +259,8 @@ class RewardLocation(models.Model):
     
     class Meta:
         db_table = 'reward_location'
-        verbose_name = 'Reward Location'
-        verbose_name_plural = 'Reward Locations'
+        verbose_name = 'Participating Reward Location'
+        verbose_name_plural = 'Participating Reward Locations'
         
         constraints = [
             models.UniqueConstraint(
@@ -264,6 +276,10 @@ class RewardLocation(models.Model):
     created_date = models.DateTimeField(
         verbose_name = 'Created Date',
         auto_now_add = True,
+    )
+    modified_date = models.DateTimeField(
+        verbose_name = 'Modified Date',
+        auto_now = True,
     )
     reward = models.ForeignKey(
         Reward,
@@ -299,6 +315,10 @@ class RewardEarning(models.Model):
     created_date = models.DateTimeField(
         verbose_name = 'Created Date',
         auto_now_add = True,
+    )
+    modified_date = models.DateTimeField(
+        verbose_name = 'Modified Date',
+        auto_now = True,
     )
     user = models.ForeignKey(
         AccountUser,
@@ -371,6 +391,10 @@ class RewardAdjustment(models.Model):
     created_date = models.DateTimeField(
         verbose_name = 'Created Date',
         auto_now_add = True,
+    )
+    modified_date = models.DateTimeField(
+        verbose_name = 'Modified Date',
+        auto_now = True,
     )
     user = models.ForeignKey(
         AccountUser,
@@ -449,6 +473,10 @@ class RewardRedemption(models.Model):
     created_date = models.DateTimeField(
         verbose_name = 'Created Date',
         auto_now_add = True,
+    )
+    modified_date = models.DateTimeField(
+        verbose_name = 'Modified Date',
+        auto_now = True,
     )
     user = models.ForeignKey(
         AccountUser,

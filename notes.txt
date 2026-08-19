@@ -34,4 +34,4 @@ Completed:
 
 Notes:
     - Admin portal, adding business requires +1, likely need to add country and allow formatting
-    
+    - Need to add cross validations so the users belong to the proper business, reward, program, etc.

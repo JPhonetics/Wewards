@@ -4,7 +4,7 @@ from apps.businesses.models import (
     Business,
     BusinessLocation,
     BusinessStaff,
-    BusinessItem
+    BusinessItem,
 )
 
 ## Business Forms
