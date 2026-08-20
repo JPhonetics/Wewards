@@ -36,3 +36,8 @@ Notes:
     - Admin portal, adding business requires +1, likely need to add country and allow formatting
         - same for user, 
     - Need to add cross validations so the users belong to the proper business, reward, program, etc.
+
+
+Calculation logic:
+    - https://medium.com/@abhinav.dobhal/building-a-robust-service-layer-in-django-with-drf-3a3fc6a841c6
+    - https://medium.com/@djangowiki/building-a-service-layer-in-django-without-overengineering-it-advanced-guide-d7f4861d2ab4
