@@ -603,9 +603,8 @@ class RewardRedemption(models.Model):
     )
     location = models.ForeignKey(
         BusinessLocation,
-        on_delete = models.SET_NULL,
+        on_delete = models.PROTECT,
         related_name = 'redeemed_rewards',
-        null = True,
     )
     processed_by_staff = models.ForeignKey(
         BusinessStaff,

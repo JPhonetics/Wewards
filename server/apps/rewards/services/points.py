@@ -109,5 +109,33 @@ def award_points(
     return new_award
         
 
-def redeem_points():
-    pass
+def redeem_points(
+    user_id: uuid.UUID, 
+    reward_program_id: uuid.UUID,
+    location_id: uuid.UUID,
+    business_staff_id: uuid.UUID,
+    reward_id: uuid.UUID,
+):
+    user = get_account_user(user_id)
+    reward_program = get_reward_program(reward_program_id)
+    location = get_business_location(location_id) 
+    staff = get_business_staff(business_staff_id)
+    reward = get_reward(reward_id)
+    
+    balance = calculate_balance(user_id, reward_program_id)
+    
+    if balance < reward.amount_required:
+        raise ValidationError (
+            "Insufficient Points."
+        )
+        
+    redeemed = RewardRedemption.objects.create(
+        user = user,
+        reward_program = reward_program,
+        location = location,
+        processed_by_staff = staff,
+        reward = reward,
+        amount_redeemed = reward.amount_required,
+    )
+    
+    return redeemed
