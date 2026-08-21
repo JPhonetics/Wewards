@@ -256,9 +256,11 @@ class BusinessItem(models.Model):
         verbose_name = 'Business Item'
         verbose_name_plural = 'Business Items'
        
-    id = models.BigAutoField(
-        verbose_name='ID',
-        primary_key=True,
+    id = models.UUIDField(
+        verbose_name = 'ID',
+        primary_key = True, 
+        default = uuid.uuid4, 
+        editable = False,
     )
     created_date = models.DateTimeField(
         verbose_name = 'Created Date',

@@ -60,9 +60,11 @@ class RewardProgram(models.Model):
         verbose_name = 'Reward Program'
         verbose_name_plural = 'Reward Programs'
         
-    id = models.BigAutoField(
-        verbose_name='ID',
-        primary_key=True,
+    id = models.UUIDField(
+        verbose_name = 'ID',
+        primary_key = True, 
+        default = uuid.uuid4, 
+        editable = False,
     )
     created_date = models.DateTimeField(
         verbose_name = 'Created Date',
@@ -180,9 +182,11 @@ class Reward(models.Model):
         verbose_name = 'Reward'
         verbose_name_plural = 'Rewards'
         
-    id = models.BigAutoField(
-        verbose_name='ID',
-        primary_key=True,
+    id = models.UUIDField(
+        verbose_name = 'ID',
+        primary_key = True, 
+        default = uuid.uuid4, 
+        editable = False,
     )
     created_date = models.DateTimeField(
         verbose_name = 'Created Date',
@@ -379,6 +383,8 @@ class RewardEarning(models.Model):
         BusinessStaff,
         on_delete = models.PROTECT,
         related_name = 'earned_rewards',
+        blank = True,
+        null = True,
     )
     receipt_number = models.CharField(
         verbose_name = 'Receipt Number',

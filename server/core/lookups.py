@@ -117,7 +117,7 @@ def get_reward_program(
     
 
 def get_reward_program_location(
-        reward_program_location_id: uuid.UUID,
+        reward_program_location_id: int,
     ):
         from apps.rewards.models import RewardProgramLocation
         
@@ -149,7 +149,7 @@ def get_reward(
     
     
 def get_reward_location(
-        reward_location_id: uuid.UUID,
+        reward_location_id: int,
     ):
         from apps.rewards.models import RewardLocation
         

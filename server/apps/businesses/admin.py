@@ -118,6 +118,7 @@ class BusinessAdmin(admin.ModelAdmin):
             'Business Information',
             {
                 'fields': (
+                    'country',
                     'name',
                     'industry',
                     'email',
@@ -145,6 +146,7 @@ class BusinessAdmin(admin.ModelAdmin):
                     'wide',
                 ),
                 'fields': (
+                    'country',
                     'name',
                     'industry',
                     'email',
