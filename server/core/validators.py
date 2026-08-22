@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 import re
 
+
 def validate_name(value: str, message: str = "Please enter a valid name."):
     forbidden_characters = re.search(r'[~@#$%^&*{}|:<>]', value)
     
@@ -52,8 +53,6 @@ def validate_reward_match_program(
         raise ValidationError(
             "Reward must belong to the selected Reward Program."
         )
-
-
 
 
 # def validate_phone_number(value: str):

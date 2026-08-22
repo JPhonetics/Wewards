@@ -36,6 +36,8 @@ Notes:
     - Admin portal, adding business requires +1, likely need to add country and allow formatting
         - same for user, 
     - Need to add cross validations so the users belong to the proper business, reward, program, etc.
+    - Cannot update number and country after creation.
+    
 
 
 Calculation logic:

@@ -8,7 +8,6 @@ from django.contrib.auth.models import (
     PermissionsMixin
 )
 from django_countries.fields import CountryField
-from phonenumber_field.modelfields import PhoneNumberField
 from phonenumber_field.phonenumber import PhoneNumber
 from core.validators import (
     validate_first_name, 
@@ -35,16 +34,7 @@ class AccountUserManager(BaseUserManager):
         else:
             email = None
             
-        if phone_number:
-            phone_number = PhoneNumber.from_string(
-                phone_number,
-                region = country,
-            )
-
-            if not phone_number.is_valid():
-                raise ValidationError('Enter a valid phone number.')
-        else:
-            phone_number = None
+        phone_number = phone_number.strip()
                     
         user = self.model(
             country = country,
@@ -164,7 +154,7 @@ class AccountUser(AbstractBaseUser, PermissionsMixin):
         blank = True,
         null = True,
     )
-    phone_number = PhoneNumberField(
+    phone_number = models.CharField(
         verbose_name = 'Phone Number',
         max_length = 16,
         unique = True,
@@ -209,3 +199,21 @@ class AccountUser(AbstractBaseUser, PermissionsMixin):
             f"Phone Number: {self.phone_number} - "
             f"Active: {self.is_active}"
         )
+    
+    def clean(self):
+        super().clean()
+
+        # Moved phone_number verification to clean because different 
+        # function between API and Admin portal
+        if self.phone_number:
+            phone_number = PhoneNumber.from_string(
+                self.phone_number,
+                region = str(self.country),
+            )
+
+            if not phone_number.is_valid():
+                raise ValidationError(
+                    'Enter a valid phone number.'
+                )
+                
+            self.phone_number = str(phone_number)
