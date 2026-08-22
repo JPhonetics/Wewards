@@ -200,6 +200,7 @@ class AccountUser(AbstractBaseUser, PermissionsMixin):
             f"Active: {self.is_active}"
         )
     
+    
     def clean(self):
         super().clean()
 

@@ -37,7 +37,7 @@ services:
     build: ./client
     image: wewards_client_image
     container_name: wewards_client_container
-    command: npm run dev -- --host 0.0.0.0
+    command: sh -c "npm ci && npm run dev -- --host 0.0.0.0"
     ports:
       - "5173:5173"
     volumes:
