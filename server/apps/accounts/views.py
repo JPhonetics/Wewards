@@ -49,5 +49,28 @@ class AccountUserLogin(APIView):
             
         return Response(
            {"user": user.email}, 
-           status=status.HTTP_200_OK 
+           status = status.HTTP_200_OK 
+        )
+        
+        
+class AccountUserInfo(APIView):
+    
+    def get(self, request):
+        user = request.user
+        
+        return Response(
+            f"email: {user.email}",
+        )
+
+
+class AccountUserLogout(APIView):
+    
+    def post(self, request):
+        user = request.user
+        
+        email = user.email
+        
+        return Response(
+            f"{email} has been logged out",
+            status = status.HTTP_204_NO_CONTENT
         )
