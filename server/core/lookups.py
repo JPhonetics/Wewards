@@ -1,6 +1,7 @@
 import uuid
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+        
 
 def get_account_user(
         user_id: uuid.UUID,
@@ -146,6 +147,20 @@ def get_reward(
             )
 
         return reward
+    
+    
+def get_rewards_by_program(
+        reward_program_id: uuid.UUID,
+    ):
+        from apps.rewards.models import Reward
+    
+        reward_program = get_reward_program(reward_program_id)
+        
+        rewards = Reward.objects.filter(
+            reward_program = reward_program
+        )
+
+        return rewards
     
     
 def get_reward_location(

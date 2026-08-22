@@ -3,6 +3,7 @@ from django.db.models import Sum
 from apps.accounts.models import *
 from apps.rewards.models import *
 from core.lookups import *
+from core.validators import *
 
 
 def calculate_balance(
@@ -12,11 +13,10 @@ def calculate_balance(
     user = get_account_user(user_id)
     reward_program = get_reward_program(reward_program_id)
     
-    user_earnings = RewardEarning.objects.filter(
+    earnings = RewardEarning.objects.filter(
         user = user,
-        reward_program = reward_program
-    )
-    earnings = user_earnings.aggregate(
+        reward_program = reward_program,
+    ).aggregate(
         total = Sum("amount_earned")
     )
     earnings = (
@@ -25,11 +25,10 @@ def calculate_balance(
         else Decimal("0")
     )
     
-    user_adjustments = RewardAdjustment.objects.filter(
+    adjustments = RewardAdjustment.objects.filter(
         user = user,
-        reward_program = reward_program
-    )
-    adjustments = user_adjustments.aggregate(
+        reward_program = reward_program,
+    ).aggregate(
         total = Sum("adjustment_amount")
     )
     adjustments = (
@@ -38,11 +37,10 @@ def calculate_balance(
         else Decimal("0")
     )
     
-    user_redemptions = RewardRedemption.objects.filter(
+    redemptions = RewardRedemption.objects.filter(
         user = user,
-        reward_program = reward_program
-    )
-    redemptions = user_redemptions.aggregate(
+        reward_program = reward_program,
+    ).aggregate(
         total = Sum("amount_redeemed")
     )
     redemptions = (
@@ -59,7 +57,7 @@ def eligible_rewards(
     reward_program_id: uuid.UUID,
 ):
     balance = calculate_balance(user_id, reward_program_id)
-    rewards = Reward.objects.filter(reward_program = reward_program_id)
+    rewards = get_rewards_by_program(reward_program_id)
     
     eligible_rewards = rewards.filter(amount_required__lte = balance)
     
@@ -95,6 +93,18 @@ def award_points(
         else None
     )
     
+    if location or staff:
+        business = get_business(reward_program.business_id)
+         
+        if location:
+            validate_location_match_business(business, location)
+        
+        if staff:
+            validate_staff_match_business(business, staff)
+        
+    if reward:
+        validate_reward_match_program(reward_program, reward) 
+    
     new_award = RewardEarning.objects.create(
         user = user,
         reward_program = reward_program,
@@ -116,18 +126,27 @@ def redeem_points(
     business_staff_id: uuid.UUID,
     reward_id: uuid.UUID,
 ):
-    user = get_account_user(user_id)
     reward_program = get_reward_program(reward_program_id)
-    location = get_business_location(location_id) 
-    staff = get_business_staff(business_staff_id)
     reward = get_reward(reward_id)
+    validate_reward_match_program(reward_program, reward) 
     
     balance = calculate_balance(user_id, reward_program_id)
-    
+        
     if balance < reward.amount_required:
         raise ValidationError (
             "Insufficient Points."
         )
+        
+    business = get_business(reward_program.business_id)
+    staff = get_business_staff(business_staff_id)
+    validate_staff_match_business(business, staff)
+    
+    location = get_business_location(location_id) 
+    validate_location_match_business(business, location)
+    
+    # need a validator to check the location can accept the reward
+    
+    user = get_account_user(user_id)
         
     redeemed = RewardRedemption.objects.create(
         user = user,
