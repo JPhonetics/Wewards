@@ -1,6 +1,9 @@
-import LoginCard from '../components/AuthForm/LoginCard'
+import { useOutletContext } from 'react-router-dom';
+import LoginCard from '../components/AuthForm/LoginCard';
 
-export default function HomePage({ setUser }) {
+export default function HomePage() {
+
+    const { setUser } = useOutletContext()
 
     return (
         <>
