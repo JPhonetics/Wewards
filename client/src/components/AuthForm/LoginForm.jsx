@@ -1,8 +1,10 @@
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react';
-import { userLogin } from '../../utilities';
+import { userLogin, userConfirmation } from '../../utilities';
 import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
 
 
 const LoginForm = ({setUser}) => {
@@ -14,7 +16,10 @@ const LoginForm = ({setUser}) => {
     const handleSubmit = async (e) => {
         e.preventDefault()
 
-        const loggedInUser = await userLogin(username, password)
+        const logInUser = await userLogin(username, password)
+        if (!logInUser) return
+
+        const loggedInUser = await userConfirmation()
         if (!loggedInUser) return
 
         setUser(loggedInUser)
@@ -45,6 +50,18 @@ const LoginForm = ({setUser}) => {
                         required
                     />
                 </Form.Group>
+
+                <Form.Group>
+                    <Link to="/forgot-password" className="formForgotPassword">
+                        Forgot password?
+                    </Link>
+                </Form.Group>
+
+                {/* <Form.Group as={Row} className="mb-3" controlId="formRememberMe">
+                    <Col sm={{ span: 10, offset: 2 }}>
+                        <Form.Check label="Remember me" />
+                    </Col>
+                </Form.Group> */}
 
                 <Button variant="primary" type="submit">
                     Login

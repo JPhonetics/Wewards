@@ -1,5 +1,5 @@
 import Card from 'react-bootstrap/Card';
-import LoginForm from '../AuthForm/LoginForm';
+import RegisterForm from '../AuthForm/RegisterForm';
 
 function LoginCard({ setUser }) {
 
@@ -7,7 +7,7 @@ function LoginCard({ setUser }) {
     <Card style={{ width: '18rem' }}>
       <Card.Body>
         <Card.Title>Login</Card.Title>
-            <LoginForm setUser={setUser} />
+            <RegisterForm setUser={setUser} />
       </Card.Body>
     </Card>
   );

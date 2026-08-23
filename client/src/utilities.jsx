@@ -73,7 +73,7 @@ export const userLogOut = async () =>{
 export const userConfirmation = async () => {
 
     try{
-        const response = await api.get("accounts/");
+        const response = await api.get("accounts/user/");
         return response.data;
     } catch (error){
         return null;

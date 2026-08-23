@@ -211,6 +211,7 @@ class AccountUserRefresh(APIView):
         response = Response({"refreshed":True})
         return set_auth_cookies(response, access, new_refresh)   
 
+
 class AccountUserView(APIView):
     authentication_classes = [JWTCookieAuthentication]
     permission_classes = [IsAuthenticated]
@@ -222,7 +223,7 @@ class AccountUserInfo(AccountUserView):
         user = request.user
         
         return Response(
-            f"User: {user.email or user.phone_number}",
+            AccountUserSerializer(user).data
         )
 
 

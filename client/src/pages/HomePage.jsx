@@ -12,6 +12,7 @@ export default function HomePage() {
             <div style={{display: 'flex', justifyContent: 'center'}}>
                 <LoginCard setUser={setUser}/>
             </div>
+
         </>
     )
 }

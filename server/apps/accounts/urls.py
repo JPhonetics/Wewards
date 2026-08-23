@@ -11,6 +11,6 @@ urlpatterns = [
     path('register/', AccountUserRegistration.as_view(), name='register'),
     path('login/', AccountUserLogin.as_view(), name='login'),
     path('logout/', AccountUserLogout.as_view(), name='logout'),
-    path('info/', AccountUserInfo.as_view(), name='info'),
+    path('user/', AccountUserInfo.as_view(), name='user'),
     path("refresh/", AccountUserRefresh.as_view(), name='refresh')
 ]
