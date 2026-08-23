@@ -1,9 +1,14 @@
+import LoginCard from '../components/AuthForm/LoginCard'
 
-export default function HomePage() {
+export default function HomePage({ setUser }) {
 
     return (
         <>
-            <h1>HomePage starts Here</h1>
+            <h1>Welcome</h1>
+
+            <div style={{display: 'flex', justifyContent: 'center'}}>
+                <LoginCard setUser={setUser}/>
+            </div>
         </>
     )
 }
