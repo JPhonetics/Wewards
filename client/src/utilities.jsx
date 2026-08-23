@@ -40,7 +40,28 @@ const errorMessage = (error)=>{
 }
 
 
-// REGISTER and Login
+// REGISTER
+export const userRegistration = async (email, password) => {
+
+    try {
+        const response = await api.post(
+            "accounts/register/",
+            {
+                email,
+                password
+            }
+        )
+        
+        return response.data
+
+    }catch (error){
+        alert(errorMessage(error))
+        return null;
+    }
+
+}
+
+// Login
 export const userLogin = async (username, password) => {
     const credentials = username.includes("@")
         ? { email: username, password }

@@ -6,13 +6,13 @@ class AccountUserSerializer(ModelSerializer):
     class Meta:
         model = AccountUser
         fields = [
-            'id',
-            'created_date',
-            'country',
-            'first_name',
-            'last_name',
+            # 'id',
+            # 'created_date',
+            # 'country',
+            # 'first_name',
+            # 'last_name',
             'email',
-            'phone_number',
+            # 'phone_number',
             'password',
         ]
         extra_kwargs = {

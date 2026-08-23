@@ -19,36 +19,33 @@ class AccountUserManager(BaseUserManager):
     
     def create_user(
         self,
-        first_name: str,
-        last_name: str,
-        country: str = 'US',
-        email: str | None = None,
-        phone_number: str | None = None,
+        email: str,
+        # first_name: str | None = None,
+        # last_name: str | None = None,
+        # country: str | None = None,
+        # phone_number: str | None = None,
         **extra_fields,
     ):
-        first_name = first_name.strip()
-        last_name = last_name.strip()
+        # first_name = first_name.strip()
+        # last_name = last_name.strip()
         
-        if email: 
-            email = self.normalize_email(email.strip().casefold())
-        else:
-            email = None
+        email = self.normalize_email(email.strip().casefold())
             
-        phone_number = phone_number.strip()
+        # phone_number = phone_number.strip()
                     
         user = self.model(
-            country = country,
-            first_name = first_name,
-            last_name = last_name,
+            # country = country,
+            # first_name = first_name,
+            # last_name = last_name,
             email = email,
-            phone_number = phone_number,
+            # phone_number = phone_number,
             **extra_fields,
         )
         user.set_unusable_password()
         user.full_clean()
         
-        user.first_name = user.first_name[:1].upper() + user.first_name[1:]
-        user.last_name = user.last_name[:1].upper() + user.last_name[1:]
+        # user.first_name = user.first_name[:1].upper() + user.first_name[1:]
+        # user.last_name = user.last_name[:1].upper() + user.last_name[1:]
         
         user.save(using=self._db)
         
@@ -105,16 +102,16 @@ class AccountUser(AbstractBaseUser, PermissionsMixin):
         verbose_name = 'User'
         verbose_name_plural = 'Users'
         
-        constraints = [
-            models.CheckConstraint(
-                condition = (
-                    Q(email__isnull = False) |
-                    Q(phone_number__isnull = False) |
-                    Q(is_staff = True)
-                ),
-                name = 'user_requires_contact_unless_staff',
-            ),
-        ]
+        # constraints = [
+        #     models.CheckConstraint(
+        #         condition = (
+        #             Q(email__isnull = False) |
+        #             Q(phone_number__isnull = False) |
+        #             Q(is_staff = True)
+        #         ),
+        #         name = 'user_requires_contact_unless_staff',
+        #     ),
+        # ]
     
     id = models.UUIDField(
         verbose_name = 'ID',
@@ -132,11 +129,14 @@ class AccountUser(AbstractBaseUser, PermissionsMixin):
     )
     country = CountryField(
         verbose_name = 'Country',
-        default = 'US',
+        blank = True,
+        null = True,
     )
     first_name = models.CharField(
         verbose_name = 'First Name',
         max_length = 100,
+        blank = True,
+        null = True,
         validators = [
             validate_first_name,
         ]
@@ -144,6 +144,8 @@ class AccountUser(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(
         verbose_name = 'Last Name',
         max_length = 100,
+        blank = True,
+        null = True,
         validators = [
             validate_last_name,
         ]
@@ -151,8 +153,6 @@ class AccountUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(
         verbose_name = 'Email',
         unique = True,
-        blank = True,
-        null = True,
     )
     phone_number = models.CharField(
         verbose_name = 'Phone Number',
@@ -185,10 +185,7 @@ class AccountUser(AbstractBaseUser, PermissionsMixin):
     
     USERNAME_FIELD = 'email'
 
-    REQUIRED_FIELDS = [
-        'first_name',
-        'last_name',
-    ]
+    REQUIRED_FIELDS = []
 
     objects = AccountUserManager()
     

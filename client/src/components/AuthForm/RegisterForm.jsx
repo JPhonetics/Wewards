@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react';
-import { userLogin, userConfirmation } from '../../utilities';
+import { userConfirmation, userLogin, userRegistration } from '../../utilities';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
@@ -10,22 +10,39 @@ import Tabs from 'react-bootstrap/Tabs';
 
 function RegisterForm({setUser}) {
 
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
+    const [loginUsername, setLoginUsername] = useState('')
+    const [loginPassword, setLoginPassword] = useState('')
+    const [registrationEmail, setRegistrationEmail] = useState('')
+    const [registrationPassword, setRegistrationPassword] = useState('')
     const navigate = useNavigate()
 
     const handleLogin = async (e) => {
         e.preventDefault()
 
-        const logInUser = await userLogin(username, password)
+        const logInUser = await userLogin(loginUsername, loginPassword)
         if (!logInUser) return
 
         const loggedInUser = await userConfirmation()
         if (!loggedInUser) return
 
         setUser(loggedInUser)
-        setUsername('')
-        setPassword('')
+        setLoginUsername('')
+        setLoginPassword('')
+        navigate('/home')
+    }
+
+    const handleRegistration = async (e) => {
+        e.preventDefault()
+
+        const registerUser = await userRegistration(registrationEmail, registrationPassword)
+        if (!registerUser) return
+
+        const registeredUser = await userConfirmation()
+        if (!registeredUser) return
+
+        setUser(registeredUser)
+        setRegistrationEmail('')
+        setRegistrationPassword('')
         navigate('/home')
     }
 
@@ -39,22 +56,22 @@ function RegisterForm({setUser}) {
         <Tab eventKey="login" title="Login">
 
             <Form onSubmit={handleLogin}>
-                <Form.Group className="mb-3" controlId="formUsername">
+                <Form.Group className="mb-3" controlId="formLoginUsername">
                     <Form.Control 
                         type = "text" 
                         placeholder = "Email or Phone Number" 
-                        value = {username}
-                        onChange = {(e) => setUsername(e.target.value)}
+                        value = {loginUsername}
+                        onChange = {(e) => setLoginUsername(e.target.value)}
                         required
                     />
                 </Form.Group>
 
-                <Form.Group className="mb-3" controlId="formBasicPassword">
+                <Form.Group className="mb-3" controlId="formLoginPassword">
                     <Form.Control 
                         type = "password" 
                         placeholder = "Password" 
-                        value = {password}
-                        onChange = {(e) => setPassword(e.target.value)}
+                        value = {loginPassword}
+                        onChange = {(e) => setLoginPassword(e.target.value)}
                         required
                     />
                 </Form.Group>
@@ -77,45 +94,15 @@ function RegisterForm({setUser}) {
             </Form>
 
         </Tab>
-            <Tab eventKey="signup" title="Signup">
+            <Tab eventKey="register" title="Join">
 
-                {/* <Form onSubmit={handleSignup}>
-                    <Form.Group className="mb-3" controlId="formRegisterFirstName">
-                        <Form.Control 
-                            type = "text" 
-                            placeholder = "First Name" 
-                            value = {firstName}
-                            onChange = {(e) => setUsername1(e.target.value)}
-                            required
-                        />
-                    </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="formRegisterLastName">
-                        <Form.Control 
-                            type = "text" 
-                            placeholder = "Last Name" 
-                            value = {lastName}
-                            onChange = {(e) => setUsername1(e.target.value)}
-                            required
-                        />
-                    </Form.Group>
-
+                <Form onSubmit={handleRegistration}>
                     <Form.Group className="mb-3" controlId="formRegisterEmail">
                         <Form.Control 
-                            type = "text" 
+                            type = "email" 
                             placeholder = "Email" 
-                            value = {email}
-                            onChange = {(e) => setUsername1(e.target.value)}
-                            required
-                        />
-                    </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="formRegisterFirstName">
-                        <Form.Control 
-                            type = "text" 
-                            placeholder = "Phone Number" 
-                            value = {firstName}
-                            onChange = {(e) => setUsername1(e.target.value)}
+                            value = {registrationEmail}
+                            onChange = {(e) => setRegistrationEmail(e.target.value)}
                             required
                         />
                     </Form.Group>
@@ -124,18 +111,8 @@ function RegisterForm({setUser}) {
                         <Form.Control 
                             type = "password" 
                             placeholder = "Password" 
-                            value = {password}
-                            onChange = {(e) => setPassword1(e.target.value)}
-                            required
-                        />
-                    </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="formRegisterPasswordConfirm">
-                        <Form.Control 
-                            type = "password" 
-                            placeholder = "Password" 
-                            value = {passwordConfirm}
-                            onChange = {(e) => setPassword(e.target.value)}
+                            value = {registrationPassword}
+                            onChange = {(e) => setRegistrationPassword(e.target.value)}
                             required
                         />
                     </Form.Group>
@@ -143,7 +120,7 @@ function RegisterForm({setUser}) {
                     <Button variant="primary" type="submit">
                         Submit
                     </Button>
-                </Form> */}
+                </Form>
 
             </Tab>
 
