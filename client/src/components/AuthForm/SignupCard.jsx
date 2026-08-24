@@ -13,7 +13,7 @@ function LoginCard({setUser}) {
       <Card.Body>
 
         <Tabs
-          defaultActiveKey = "login"
+          defaultActiveKey = "signup"
           id = "justify-tab-example"
           className = "mb-3"
           justify

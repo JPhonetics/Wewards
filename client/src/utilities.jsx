@@ -41,7 +41,7 @@ const errorMessage = (error)=>{
 
 
 // REGISTER
-export const userRegistration = async (email, password) => {
+export const userSignup = async (email, password) => {
 
     try {
         const response = await api.post(
@@ -105,12 +105,12 @@ export const userConfirmation = async () => {
 //  blocks a route: bounce to login page if there is no token
 export const requireLogin = async ()=>{
     const user = await userConfirmation()
-    if (!user) throw redirect("/");
+    if (!user) throw redirect("/login");
     return null;
 }
 
 //  the reverse.... a logged in user has no business on the login page
 export const redirectIfLoggedIn = async ()=>{
     const user = await userConfirmation()
-    return user ? redirect("/home") : null;
+    return user ? redirect("/user/dashboard") : null;
 }

@@ -19,22 +19,31 @@ function NavBar({ user, setUser }) {
 
   return (
     <>
-      <Navbar bg="dark" data-bs-theme="dark">
+      <Navbar bg = "dark" data-bs-theme = "dark">
         <Container>
-          <Nav className="me-auto">
-            <Nav.Link as={Link} to="/">Home</Nav.Link>
-            <Nav.Link as={Link} to="/">How It Works?</Nav.Link>
-            <Nav.Link as={Link} to="/">For Business</Nav.Link>
+          <Nav className = "me-auto">
+            <Nav.Link as = {Link} to = "/">Home</Nav.Link>
+            <Nav.Link as = {Link} to = "/">How It Works?</Nav.Link>
+            <Nav.Link as = {Link} to = "/">For Business</Nav.Link>
           </Nav>
 
-           {user && (
-              <Button
-                  variant="outline-light"
-                  onClick={handleLogOut}
-              >
-                  Logout
-              </Button>
+           {user ? (
+            <Button
+              variant = "outline-light"
+              onClick = {handleLogOut}
+            >
+              Logout
+            </Button>
+          ) : (
+            <Button
+              as = {Link}
+              to = "/login"
+              variant = "outline-light"
+            >
+              Login
+            </Button>
           )}
+
         </Container>
       </Navbar>
     </>

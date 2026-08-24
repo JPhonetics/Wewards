@@ -1,10 +1,13 @@
 import { createBrowserRouter } from 'react-router-dom';
 import App from './App';
 import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
+import UserDashboard from './pages/user/UserDashboard';
 import ErrorPage from './pages/ErrorPage';
 import NotFoundPage from './pages/NotFoundPage';
 
-import { redirectIfLoggedIn, userConfirmation } from './utilities';
+import { requireLogin, redirectIfLoggedIn, userConfirmation } from './utilities';
 
 
 const router = createBrowserRouter(
@@ -18,16 +21,26 @@ const router = createBrowserRouter(
         {
             index: true,
             element: <HomePage />,
-            loader:redirectIfLoggedIn,
         },
         {
-            path: "home",
-            element: <HomePage />,
+            path: 'login',
+            element: <LoginPage />,
+            loader: redirectIfLoggedIn,
+        },
+        {
+            path: 'signup',
+            element: <SignupPage />,
+            loader: redirectIfLoggedIn,
+        },
+        {
+            path: "user/dashboard",
+            element: <UserDashboard />,
+            loader: requireLogin,
         },
         {
             path: '*',
             element: <NotFoundPage />
-        }
+        },
       ],
     },
   ]
