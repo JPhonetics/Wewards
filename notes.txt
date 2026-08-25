@@ -38,6 +38,7 @@ Notes:
     - Need to add cross validations so the users belong to the proper business, reward, program, etc.
     - Cannot update number and country after creation.
     - logging in with phone_number requires country code.........
+    - Store phone_number with or without country code? country code in a separate column?
 
 
 
@@ -45,3 +46,9 @@ Calculation logic:
     - https://medium.com/@abhinav.dobhal/building-a-robust-service-layer-in-django-with-drf-3a3fc6a841c6
     - https://medium.com/@djangowiki/building-a-service-layer-in-django-without-overengineering-it-advanced-guide-d7f4861d2ab4
     - https://stackoverflow.com/questions/72456647/django-login-with-email-or-phone-number
+    - https://stackoverflow.com/questions/62847000/write-an-explicit-update-method-for-serializer
+    - https://www.tracylum.com/blog/2017-05-20-autocomplete-an-address-with-a-react-form/
+    - https://medium.com/better-programming/how-to-implement-the-google-place-autocomplete-widget-in-react-hooks-4394a7a4e3b0
+    - https://npmx.dev/package/react-select-country-list
+    - https://developers.google.com/maps/documentation/javascript/load-maps-js-api?authuser=2&utm_source=chatgpt.com
+    - https://github.com/crmcmullen/medium-react-google-places/blob/main/src/service/google_place_autocomplete.js

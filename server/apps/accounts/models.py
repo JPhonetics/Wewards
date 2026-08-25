@@ -9,10 +9,15 @@ from django.contrib.auth.models import (
 )
 from django_countries.fields import CountryField
 from phonenumber_field.phonenumber import PhoneNumber
+from core.normalizers import (
+    normalize_email,
+    normalize_name,
+)
 from core.validators import (
     validate_first_name, 
-    validate_last_name, 
-)      
+    validate_last_name,
+    validate_phone_number,
+)
 
 
 class AccountUserManager(BaseUserManager):
@@ -20,77 +25,71 @@ class AccountUserManager(BaseUserManager):
     def create_user(
         self,
         email: str,
-        # first_name: str | None = None,
-        # last_name: str | None = None,
-        # country: str | None = None,
-        # phone_number: str | None = None,
+        first_name: str,
+        last_name: str,
+        country: str,
+        phone_number: str,
         **extra_fields,
-    ):
-        # first_name = first_name.strip()
-        # last_name = last_name.strip()
-        
-        email = self.normalize_email(email.strip().casefold())
-            
-        # phone_number = phone_number.strip()
-                    
+    ):       
         user = self.model(
-            # country = country,
-            # first_name = first_name,
-            # last_name = last_name,
             email = email,
-            # phone_number = phone_number,
+            first_name = first_name,
+            last_name = last_name,
+            country = country,
+            phone_number = phone_number,
             **extra_fields,
         )
         user.set_unusable_password()
-        user.full_clean()
-        
-        # user.first_name = user.first_name[:1].upper() + user.first_name[1:]
-        # user.last_name = user.last_name[:1].upper() + user.last_name[1:]
-        
+        user.full_clean() 
         user.save(using=self._db)
         
         return user
     
     def create_staff_user(
         self, 
+        email: str,
         first_name: str,
         last_name: str,
+        country: str,
+        phone_number: str,
         password: str,
         is_superuser: bool = False,
         **extra_fields
     ):
-        first_name = first_name.strip()
-        last_name = last_name.strip()
-        
         extra_fields['is_staff'] = True
         extra_fields['is_superuser'] = is_superuser
         
         staff = self.model(
+            email = email,
             first_name = first_name,
             last_name = last_name,
+            country = country,
+            phone_number = phone_number,
             **extra_fields,
         )
         staff.set_password(password)
-        staff.full_clean()
-        
-        staff.first_name = staff.first_name[:1].upper() + staff.first_name[1:]
-        staff.last_name = staff.last_name[:1].upper() + staff.last_name[1:]
-        
+        staff.full_clean()        
         staff.save(using=self._db)
         
         return staff
     
     def create_superuser(
         self, 
+        email: str,
         first_name: str,
         last_name: str,
+        country: str,
+        phone_number: str,
         password: str,
         **extra_fields
     ):
         return self.create_staff_user(
+            email = email,
             first_name = first_name,
             last_name = last_name,
             password = password,
+            country = country,
+            phone_number = phone_number,
             is_superuser = True,
             **extra_fields
         )
@@ -129,14 +128,10 @@ class AccountUser(AbstractBaseUser, PermissionsMixin):
     )
     country = CountryField(
         verbose_name = 'Country',
-        blank = True,
-        null = True,
     )
     first_name = models.CharField(
         verbose_name = 'First Name',
         max_length = 100,
-        blank = True,
-        null = True,
         validators = [
             validate_first_name,
         ]
@@ -144,8 +139,6 @@ class AccountUser(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(
         verbose_name = 'Last Name',
         max_length = 100,
-        blank = True,
-        null = True,
         validators = [
             validate_last_name,
         ]
@@ -158,8 +151,9 @@ class AccountUser(AbstractBaseUser, PermissionsMixin):
         verbose_name = 'Phone Number',
         max_length = 16,
         unique = True,
-        blank = True,
-        null = True,
+        validators = [
+            validate_phone_number,
+        ]
     )
     is_active = models.BooleanField(
         verbose_name = 'Enabled',
@@ -201,17 +195,26 @@ class AccountUser(AbstractBaseUser, PermissionsMixin):
     def clean(self):
         super().clean()
 
+        if self.email:
+            self.email = normalize_email(self.email)
+
+        if self.first_name:
+            self.first_name = normalize_name(self.first_name)
+                    
+        if self.last_name:
+            self.last_name = normalize_name(self.last_name)
+
         # Moved phone_number verification to clean because different 
         # function between API and Admin portal
-        if self.phone_number:
-            phone_number = PhoneNumber.from_string(
-                self.phone_number,
-                region = str(self.country),
-            )
+        # if self.phone_number:
+        #     phone_number = PhoneNumber.from_string(
+        #         self.phone_number,
+        #         region = str(self.country),
+        #     )
 
-            if not phone_number.is_valid():
-                raise ValidationError(
-                    'Enter a valid phone number.'
-                )
+        #     if not phone_number.is_valid():
+        #         raise ValidationError(
+        #             'Enter a valid phone number.'
+        #         )
                 
-            self.phone_number = str(phone_number)
+        #     self.phone_number = str(phone_number)

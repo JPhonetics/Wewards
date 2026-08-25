@@ -14,6 +14,8 @@ from core.lookups import (
     get_account_user,
     get_business,
 )
+from core.normalizers import normalize_email
+from core.validators import validate_phone_number
 
 
 class BusinessStaffManager(BaseUserManager):
@@ -30,7 +32,7 @@ class BusinessStaffManager(BaseUserManager):
         
         user = get_account_user(user_id)
         
-        staff_email = self.normalize_email(staff_email.strip().casefold())
+        staff_email = normalize_email(staff_email)
         
         staff = self.model(
             business = business,
@@ -67,10 +69,6 @@ class Business(models.Model):
         verbose_name = 'Modified Date',
         auto_now = True,
     )
-    country = CountryField(
-        verbose_name = 'Country',
-        default = 'US',
-    )
     name = models.CharField(
         verbose_name = 'Business Name',
         max_length = 255,
@@ -82,9 +80,12 @@ class Business(models.Model):
     email = models.EmailField(
         verbose_name = 'Business Email',
     )
-    phone_number = PhoneNumberField(
+    phone_number = models.CharField(
         verbose_name = 'Business Phone Number',
         max_length = 16,
+        validators = [
+            validate_phone_number,
+        ]
     )
     website = models.URLField(
         verbose_name = 'Website',

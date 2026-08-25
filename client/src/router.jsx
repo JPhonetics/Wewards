@@ -3,11 +3,14 @@ import App from './App';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
-import UserDashboard from './pages/user/UserDashboard';
+import UserDashboard from './pages/user/UserDashboardPage';
+import UserProfilePage from './pages/user/UserProfilePage';
+// import RegisterBusinessPage from './pages/RegisterBusinessPage';
+// import BusinessDashboard from './pages/business/BusinessDashboard'
 import ErrorPage from './pages/ErrorPage';
 import NotFoundPage from './pages/NotFoundPage';
 
-import { requireLogin, redirectIfLoggedIn, userConfirmation } from './utilities';
+import { requireLogin, redirectIfLoggedIn, userConfirmation } from './api/AccountsAPI';
 
 
 const router = createBrowserRouter(
@@ -19,27 +22,41 @@ const router = createBrowserRouter(
       errorElement: <ErrorPage />,
       children: [
         {
-            index: true,
-            element: <HomePage />,
+          index: true,
+          element: <HomePage />,
         },
         {
-            path: 'login',
-            element: <LoginPage />,
-            loader: redirectIfLoggedIn,
+          path: 'login',
+          element: <LoginPage />,
+          loader: redirectIfLoggedIn,
         },
         {
-            path: 'signup',
-            element: <SignupPage />,
-            loader: redirectIfLoggedIn,
+          path: 'signup',
+          element: <SignupPage />,
+          loader: redirectIfLoggedIn,
         },
         {
-            path: "user/dashboard",
-            element: <UserDashboard />,
-            loader: requireLogin,
+          path: "user/dashboard",
+          element: <UserDashboard />,
+          loader: requireLogin,
         },
         {
-            path: '*',
-            element: <NotFoundPage />
+          path: "user/profile",
+          element: <UserProfilePage />,
+          loader: requireLogin,
+        },
+        // {
+        //   path: "business/register",
+        //   element: <RegisterBusinessPage />,
+        // },
+        // {
+        //   path: "business/dashboard",
+        //   element: <BusinessDashboard />,
+        //   loader: requireLogin,
+        // },
+        {
+          path: '*',
+          element: <NotFoundPage />
         },
       ],
     },

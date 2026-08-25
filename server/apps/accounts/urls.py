@@ -1,16 +1,18 @@
 from django.urls import path
 from apps.accounts.views import (
-    AccountUserRegistration,
+    AccountUserSignup,
     AccountUserLogin,
     AccountUserInfo,
-    AccountUserLogout,
     AccountUserRefresh,
+    AccountUserPassword,
+    AccountUserLogout,
 )
 
 urlpatterns = [
-    path('register/', AccountUserRegistration.as_view(), name='register'),
-    path('login/', AccountUserLogin.as_view(), name='login'),
-    path('logout/', AccountUserLogout.as_view(), name='logout'),
-    path('user/', AccountUserInfo.as_view(), name='user'),
-    path("refresh/", AccountUserRefresh.as_view(), name='refresh')
+    path('signup/', AccountUserSignup.as_view(), name='account_signup'),
+    path('login/', AccountUserLogin.as_view(), name='account_login'),
+    path('user/', AccountUserInfo.as_view(), name='account_user'),
+    path("refresh/", AccountUserRefresh.as_view(), name='account_refresh'),
+    path("password/", AccountUserPassword.as_view(), name = "account_password"),
+    path('logout/', AccountUserLogout.as_view(), name='account_logout'),
 ]

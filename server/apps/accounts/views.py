@@ -11,7 +11,11 @@ from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.settings import api_settings
 
-from .serializers import AccountUserSerializer
+from .serializers import (
+    AccountUserSerializer,
+    AccountUserProfileSerializer,
+    AccountUserPasswordSerializer,
+)
 
 
 ACCESS_MAX_AGE = int(
@@ -88,7 +92,7 @@ class JWTCookieAuthentication(JWTAuthentication):
         return self.get_user(validated_token), validated_token
 
 
-class AccountUserRegistration(APIView):
+class AccountUserSignup(APIView):
     authentication_classes = []
     permission_classes = []
     
@@ -223,7 +227,57 @@ class AccountUserInfo(AccountUserView):
         user = request.user
         
         return Response(
-            AccountUserSerializer(user).data
+            AccountUserProfileSerializer(user).data
+        )
+        
+    def patch(self, request):
+        user = request.user
+
+        serialized = AccountUserProfileSerializer(
+            user,
+            data = request.data,
+            partial = True
+        )
+
+        if serialized.is_valid():
+            updated_user = serialized.save()
+
+            return Response(
+                AccountUserProfileSerializer(
+                    updated_user
+                ).data,
+                status = status.HTTP_200_OK
+            )
+
+        return Response(
+            serialized.errors,
+            status = status.HTTP_400_BAD_REQUEST
+        )
+
+
+class AccountUserPassword(AccountUserView):
+
+    def patch(self, request):
+        serialized = AccountUserPasswordSerializer(
+            data = request.data,
+            context = {
+                'request': request
+            }
+        )
+
+        if serialized.is_valid():
+            serialized.save()
+
+            return Response(
+                {
+                    "detail": "Password updated successfully."
+                },
+                status = status.HTTP_200_OK
+            )
+
+        return Response(
+            serialized.errors,
+            status = status.HTTP_400_BAD_REQUEST
         )
 
 

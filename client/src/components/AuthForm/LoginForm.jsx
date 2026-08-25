@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react';
-import { userConfirmation, userLogin } from '../../utilities';
+import { userConfirmation, userLogin } from '../../api/AccountsAPI';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 

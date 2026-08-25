@@ -1,55 +1,14 @@
-import { redirect } from 'react-router-dom';
-import axios from 'axios';
-
-export const api = axios.create({
-    baseURL: "/api/v1/",
-    withCredentials:true
-})
-
-const refreshAccessToken=()=>{
-    return axios.post("/api/v1/accounts/refresh/",{},{withCredentials:true})
-}
-
-api.interceptors.response.use(
-    // On success do nothing
-    (response)=>response,
-    // on failed/error (401) what to do
-    async (error)=>{
-        const originalRequest = error.config;
-
-        const isRefreshCall = originalRequest?.url?.includes("accounts/refresh")
-
-        if (error.response?.status === 401 && !originalRequest._retry && !isRefreshCall){
-            originalRequest._retry = true
-            try {
-                await refreshAccessToken();
-                return api(originalRequest)
-            }catch(refreshError){
-                return Promise.reject(refreshError)
-            }
-        }
-        return Promise.reject(error)
-    }
-)
-
-
-const errorMessage = (error)=>{
-    const data = error.response?.data;
-    if (!data) return "Could not reach the server.";
-    return typeof data === "string" ? data : JSON.stringify(data);
-}
+import { redirect } from "react-router-dom"
+import { api, errorMessage } from "./api"
 
 
 // REGISTER
-export const userSignup = async (email, password) => {
+export const userSignup = async (user) => {
 
     try {
         const response = await api.post(
-            "accounts/register/",
-            {
-                email,
-                password
-            }
+            "accounts/signup/",
+            user
         )
         
         return response.data
@@ -91,12 +50,13 @@ export const userLogOut = async () =>{
     return null
 
 }
+
 export const userConfirmation = async () => {
 
     try{
         const response = await api.get("accounts/user/");
         return response.data;
-    } catch (error){
+    } catch {
         return null;
     }
 }
@@ -113,4 +73,40 @@ export const requireLogin = async ()=>{
 export const redirectIfLoggedIn = async ()=>{
     const user = await userConfirmation()
     return user ? redirect("/user/dashboard") : null;
+}
+
+
+export const updateUserProfile = async (profile) => {
+    try {
+        const response = await api.patch(
+            "accounts/user/",
+            profile
+        )
+        return response.data
+
+    } catch (error) {
+        alert(errorMessage(error))
+        return null
+    }
+}
+
+
+export const updateUserPassword = async (
+    currentPassword,
+    newPassword
+) => {
+    try {
+        const response = await api.patch(
+            "accounts/password/",
+            {
+                current_password: currentPassword,
+                new_password: newPassword,
+            }
+        )
+        return response.data
+
+    } catch (error) {
+        alert(errorMessage(error))
+        return null
+    }
 }
