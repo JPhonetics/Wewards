@@ -3,7 +3,7 @@ import { useOutletContext } from "react-router-dom"
 import {
     UserProfileCard,
     UpdatePasswordCard
-} from "../../components/UserProfile"
+} from "../../components/User"
 
 
 export default function UserProfilePage() {

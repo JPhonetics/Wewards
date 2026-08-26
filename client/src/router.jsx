@@ -3,10 +3,11 @@ import App from './App';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
-import UserDashboard from './pages/user/UserDashboardPage';
-import UserProfilePage from './pages/user/UserProfilePage';
-// import RegisterBusinessPage from './pages/RegisterBusinessPage';
-// import BusinessDashboard from './pages/business/BusinessDashboard'
+import UserDashboard from './pages/User/UserDashboardPage';
+import UserProfilePage from './pages/User/UserProfilePage';
+import BusinessRegisterPage from './pages/BusinessRegisterPage';
+import BusinessDashboardPage from './pages/Business/BusinessDashboardPage'
+import BusinessPage from './pages/Business/BusinessPage'
 import ErrorPage from './pages/ErrorPage';
 import NotFoundPage from './pages/NotFoundPage';
 
@@ -45,15 +46,21 @@ const router = createBrowserRouter(
           element: <UserProfilePage />,
           loader: requireLogin,
         },
-        // {
-        //   path: "business/register",
-        //   element: <RegisterBusinessPage />,
-        // },
-        // {
-        //   path: "business/dashboard",
-        //   element: <BusinessDashboard />,
-        //   loader: requireLogin,
-        // },
+        {
+          path: "business/register",
+          element: <BusinessRegisterPage />,
+          loader: requireLogin,
+        },
+        {
+          path: "business/dashboard",
+          element: <BusinessDashboardPage />,
+          loader: requireLogin,
+        },
+        {
+          path: "business/:businessId",
+          element: <BusinessPage />,
+          loader: requireLogin,
+        },
         {
           path: '*',
           element: <NotFoundPage />

@@ -1,53 +1,154 @@
-import { Link, useNavigate } from 'react-router-dom';
-import Button from 'react-bootstrap/Button'
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
+import { Link, useNavigate } from "react-router-dom"
 
-import { userLogOut } from "../../api/AccountsAPI";
+import Container from "react-bootstrap/Container"
+import Nav from "react-bootstrap/Nav"
+import Navbar from "react-bootstrap/Navbar"
+import NavDropdown from "react-bootstrap/NavDropdown"
+
+import { userLogOut } from "../../api/AccountsAPI"
 
 
-function NavBar({ user, setUser }) {
+function NavBar({
+  user,
+  setUser,
+  businessStaff,
+  setBusinessStaff,
+}) {
 
   const navigate = useNavigate()
 
+
   const handleLogOut = async () => {
+
     await userLogOut()
+
     setUser(null)
-    navigate('/')
+    setBusinessStaff([])
+
+    navigate("/")
   }
 
+
   return (
-    <>
-      <Navbar bg = "dark" data-bs-theme = "dark">
-        <Container>
-          <Nav className = "me-auto">
-            <Nav.Link as = {Link} to = "/">Home</Nav.Link>
-            <Nav.Link as = {Link} to = "/">How It Works?</Nav.Link>
-            <Nav.Link as = {Link} to = "/business/register">For Business</Nav.Link>
+
+    <Navbar
+      bg = "dark"
+      data-bs-theme = "dark"
+      expand = "lg"
+    >
+
+      <Container>
+        <Navbar.Brand
+          as = {Link}
+          to = "/"
+        >
+          Wewards
+        </Navbar.Brand>
+
+        <Navbar.Toggle />
+
+        <Navbar.Collapse>
+          <Nav>
+
+            <Nav.Link
+              as = {Link}
+              to = "/"
+            >
+              How It Works?
+            </Nav.Link>
+
+            <Nav.Link
+              as = {Link}
+              to = "/business/register"
+            >
+              For Business
+            </Nav.Link>
+
           </Nav>
 
-           {user ? (
-            <Button
-              variant = "outline-light"
-              onClick = {handleLogOut}
-            >
-              Logout
-            </Button>
-          ) : (
-            <Button
-              as = {Link}
-              to = "/login"
-              variant = "outline-light"
-            >
-              Login
-            </Button>
-          )}
+          <Nav className = "ms-auto">
 
-        </Container>
-      </Navbar>
-    </>
-  );
+            {user && businessStaff.length > 0 && (
+
+              <NavDropdown
+                title = "Business"
+                align = "end"
+              >
+
+                {businessStaff.map((staff) => (
+
+                  <NavDropdown.Item
+                    key = {staff.id}
+                    as = {Link}
+                    to = {`/business/${staff.business.id}`}
+                  >
+                    {staff.business.name}
+                  </NavDropdown.Item>
+
+                ))}
+
+                <NavDropdown.Divider />
+
+                <NavDropdown.Item
+                  as = {Link}
+                  to = "/business/dashboard"
+                >
+                  All Businesses
+                </NavDropdown.Item>
+
+              </NavDropdown>
+
+            )}
+
+
+            {user ? (
+
+              <NavDropdown
+                title = {user.first_name}
+                align = "end"
+              >
+
+                <NavDropdown.Item
+                  as = {Link}
+                  to = "/user/dashboard"
+                >
+                  User Dashboard
+                </NavDropdown.Item>
+
+                <NavDropdown.Item
+                  as = {Link}
+                  to = "/user/profile"
+                >
+                  Profile
+                </NavDropdown.Item>
+
+                <NavDropdown.Divider />
+
+                <NavDropdown.Item
+                  onClick = {handleLogOut}
+                >
+                  Logout
+                </NavDropdown.Item>
+
+              </NavDropdown>
+
+            ) : (
+
+              <Nav.Link
+                as = {Link}
+                to = "/login"
+              >
+                Login
+              </Nav.Link>
+
+            )}
+
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
+  )
 }
 
-export default NavBar;
+
+export default NavBar

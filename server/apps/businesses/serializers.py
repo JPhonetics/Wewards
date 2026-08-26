@@ -1,58 +1,22 @@
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 
-from rest_framework.serializers import ModelSerializer, ValidationError
+from rest_framework.serializers import (
+    CharField,
+    ModelSerializer,
+    ValidationError,
+)
 
-from apps.accounts.models import AccountUser
 from apps.businesses.models import (
     Business,
     BusinessItem,
     BusinessLocation,
     BusinessStaff,
 )
-
-
-class BusinessAccountUserSerializer(ModelSerializer):
-    
-    class Meta:
-        model = AccountUser
-        fields = [
-            'id',
-            'country',
-            'first_name',
-            'last_name',
-            'email',
-            'phone_number',
-            'password',
-        ]
-        extra_kwargs = {
-            'password': {
-                'write_only': True,
-            },
-        }
-        
-    def create(self, validated_data):
-        password = validated_data.pop('password')
-
-        try:
-            user = AccountUser.objects.create_user(
-                **validated_data
-            )
-
-        except DjangoValidationError as error:
-            raise ValidationError(
-                error.message_dict
-            )
-
-        if password:
-            user.set_password(password)
-        else:
-            user.set_unusable_password()
-
-        user.save()
-
-        return user
-    
+from core.choices import (
+    BusinessRoleChoices,
+    UserStatusChoices,
+)
 
 class BusinessSerializer(ModelSerializer):
     
@@ -84,6 +48,8 @@ class BusinessSerializer(ModelSerializer):
 
 class BusinessLocationSerializer(ModelSerializer):
     
+    timezone = CharField()
+    
     class Meta:
         model = BusinessLocation
         fields = [
@@ -114,18 +80,12 @@ class BusinessLocationSerializer(ModelSerializer):
 
 class BusinessRegisterSerializer(ModelSerializer):
 
-    account_user = BusinessAccountUserSerializer(
-        required = False
-    )
-
     business = BusinessSerializer()
-
     business_location = BusinessLocationSerializer()
 
     class Meta:
         model = BusinessStaff
         fields = [
-            'account_user',
             'business',
             'business_location',
         ]
@@ -133,46 +93,18 @@ class BusinessRegisterSerializer(ModelSerializer):
     @transaction.atomic
     def create(self, validated_data):
 
-        account_user_data = validated_data.pop(
-            'account_user',
-            None
-        )
+        business_data = validated_data.pop('business')
+        location_data = validated_data.pop('business_location')
 
-        business_data = validated_data.pop(
-            'business'
-        )
-
-        location_data = validated_data.pop(
-            'business_location'
-        )
-
-        request = self.context.get(
-            'request'
-        )
-
+        # Capture user information from request
+        request = self.context.get('request')
         user = request.user
 
-        if not user.is_authenticated:
+        business = BusinessSerializer().create(business_data)
 
-            if not account_user_data:
-                raise ValidationError({
-                    'account_user':
-                        'Account information is required.'
-                })
-
-            user = BusinessAccountUserSerializer().create(
-                account_user_data
-            )
-
-        business = BusinessSerializer().create(
-            business_data
-        )
-
+        # Add business object into location_data under business key
         location_data['business'] = business
-
-        location = BusinessLocationSerializer().create(
-            location_data
-        )
+        location = BusinessLocationSerializer().create(location_data)
 
         try:
             admin = (
@@ -180,7 +112,8 @@ class BusinessRegisterSerializer(ModelSerializer):
                     business_id = business.id,
                     user_id = user.id,
                     staff_email = user.email,
-                    role = 'admin',
+                    role = BusinessRoleChoices.ADMIN,
+                    status = UserStatusChoices.ACTIVE,
                 )
             )
 
@@ -190,15 +123,44 @@ class BusinessRegisterSerializer(ModelSerializer):
             )
 
         return {
-            'account_user': user,
             'business': business,
             'business_location': location,
             'business_staff': admin,
         }
 
 
+class BusinessStaffSerializer(ModelSerializer):
+
+    business = BusinessSerializer(read_only = True)
+    role_display = CharField(
+        source = 'get_role_display',
+        read_only = True
+    )
+
+    class Meta:
+        model = BusinessStaff
+        fields = [
+            'id',
+            'business',
+            'role',
+            'role_display',
+            'status',
+        ]
+
+
 class BusinessItemSerializer(ModelSerializer):
+    
+    status_display = CharField(
+            source = 'get_status_display',
+            read_only = True
+        )
     
     class Meta:
         model = BusinessItem
         fields = '__all__'
+        extra_kwargs = {
+            'id': {'read_only': True},
+            'business': {'read_only': True},
+            'created_date': {'read_only': True},
+            'modified_date': {'read_only': True},
+        }
