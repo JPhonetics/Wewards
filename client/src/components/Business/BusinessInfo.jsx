@@ -6,11 +6,7 @@ export default function BusinessInfo({business}) {
     return (
         <>
 
-            <div className = "d-flex justify-content-between align-items-center mb-3">
-
-                <h3>
-                    Business Information
-                </h3>
+            <div className = "d-flex justify-content-end align-items-center mb-3">
 
                 <Button
                     variant = "primary"

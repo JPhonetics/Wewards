@@ -1,60 +1,97 @@
 import { useEffect, useState } from "react"
 
-import { getBusinessItems } from "../../api/BusinessesAPI"
+import Button from "react-bootstrap/Button"
+import ListGroup from "react-bootstrap/ListGroup"
+
+import {
+    deleteBusinessItem,
+    getBusinessItems,
+} from "../../api/BusinessesAPI"
 
 
 export default function BusinessItems({
     businessId,
+    itemRefresh,
 }) {
 
     const [items, setItems] = useState([])
 
-    // Store items when tab loads
+
     useEffect(() => {
 
         const loadItems = async () => {
 
-            const businessItems = await getBusinessItems(
+            const response = await getBusinessItems(
                 businessId
             )
 
-            if (businessItems) {
-                setItems(businessItems)
+            if (response) {
+                setItems(response)
             }
         }
 
         loadItems()
 
-    }, [businessId])
+    }, [
+        businessId,
+        itemRefresh
+    ])
+
+
+    const handleDelete = async (itemId) => {
+
+        const response = await deleteBusinessItem(
+            businessId,
+            itemId
+        )
+
+        if (response) {
+
+            setItems((currentItems) =>
+                currentItems.filter(
+                    (item) => item.id !== itemId
+                )
+            )
+        }
+    }
 
 
     return (
-        <>
 
-            <h3>
-                Items
-            </h3>
+        <ListGroup>
 
             {items.map((item) => (
 
-                <div key = {item.id}>
+                <ListGroup.Item
+                    key = {item.id}
+                    className = "d-flex justify-content-between align-items-center"
+                >
 
-                    <strong>
-                        {item.name}
-                    </strong>
+                    <div>
 
-                    <p>
-                        {item.description}
-                    </p>
+                        <strong>
+                            {item.name}
+                        </strong>
 
-                    <p>
-                        Status: {item.status_display}
-                    </p>
+                        <div>
+                            {item.status_display}
+                        </div>
 
-                </div>
+                    </div>
+
+                    <Button
+                        variant = "danger"
+                        onClick = {
+                            () => handleDelete(item.id)
+                        }
+                    >
+                        Delete
+                    </Button>
+
+                </ListGroup.Item>
 
             ))}
 
-        </>
+        </ListGroup>
     )
 }

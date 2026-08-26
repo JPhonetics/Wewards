@@ -3,7 +3,7 @@ import Form from "react-bootstrap/Form"
 import Button from "react-bootstrap/Button"
 import FloatingLabel from "react-bootstrap/FloatingLabel"
 
-import { updateUserProfile } from "../../api/AccountsAPI"
+import { updateUserProfile } from "../../../api/AccountsAPI"
 
 
 export default function UserProfileForm({user, setUser}) {

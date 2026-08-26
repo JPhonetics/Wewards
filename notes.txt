@@ -39,10 +39,13 @@ Notes:
     - Cannot update number and country after creation.
     - logging in with phone_number requires country code.........
     - Store phone_number with or without country code? country code in a separate column?
+    - Business Dashboard Stats does not update on state change.
+    - Future me: research how to display the existing data in a dynamic table. searchable, filterable, and sortable.
+    - Create lookup to validate user has access to business
 
 
 
-Calculation logic:
+Links for Review:
     - https://medium.com/@abhinav.dobhal/building-a-robust-service-layer-in-django-with-drf-3a3fc6a841c6
     - https://medium.com/@djangowiki/building-a-service-layer-in-django-without-overengineering-it-advanced-guide-d7f4861d2ab4
     - https://stackoverflow.com/questions/72456647/django-login-with-email-or-phone-number
@@ -52,3 +55,9 @@ Calculation logic:
     - https://npmx.dev/package/react-select-country-list
     - https://developers.google.com/maps/documentation/javascript/load-maps-js-api?authuser=2&utm_source=chatgpt.com
     - https://github.com/crmcmullen/medium-react-google-places/blob/main/src/service/google_place_autocomplete.js
+    - https://www.geeksforgeeks.org/reactjs/what-are-controlled-components-in-reactjs/
+    - https://blog.webdevsimplified.com/2022-07/react-folder-structure/ (future consideration to clean up since I'm a mess right now)
+    - https://21st.dev/community/components/s/card (cool, but I'm poor)
+    - https://stackoverflow.com/questions/76132544/selecting-and-using-values-from-api-populated-dropdown-in-a-react-form
+    - https://dev.to/kpnigalye/react-form-optimization-dynamic-data-fetching-for-select-fields-lp9
+    - https://www.freecodecamp.org/news/how-to-build-dependent-dropdowns-in-react/

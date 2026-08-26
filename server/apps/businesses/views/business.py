@@ -3,17 +3,15 @@ from rest_framework import status
 
 from apps.accounts.views import AccountUserView
 from apps.businesses.models import (
-    BusinessItem,
-    BusinessLocation,
     BusinessStaff,
 )
-
 from apps.businesses.serializers import (
-    BusinessItemSerializer,
-    BusinessLocationSerializer,
     BusinessRegisterSerializer,
     BusinessSerializer,
     BusinessStaffSerializer,
+)
+from core.lookups import (
+    get_rewards_by_business,
 )
 
 
@@ -43,26 +41,6 @@ class BusinessRegister(AccountUserView):
         return Response(
             serialized.errors,
             status = status.HTTP_400_BAD_REQUEST
-        )
-        
-    
-class BusinessStaffInfo(AccountUserView):
-
-    def get(self, request):
-
-        business_staff = BusinessStaff.objects.filter(
-            user = request.user
-        )
-
-        # Serialize all BusinessStaff records for the user
-        serialized = BusinessStaffSerializer(
-            business_staff,
-            many = True
-        )
-
-        return Response(
-            serialized.data,
-            status = status.HTTP_200_OK
         )
         
         
@@ -154,116 +132,18 @@ class BusinessStats(AccountUserView):
             )
 
         business = business_staff.business
+        
+        rewards = get_rewards_by_business(business.id)
 
         stats = {
             'locations': business.locations.count(),
             'staff': business.staff.count(),
             'items': business.items.count(),
+            'reward_programs': business.reward_programs.count(),
+            'rewards': rewards.count(),
         }
 
         return Response(
             stats,
-            status = status.HTTP_200_OK
-        )
-
-
-class BusinessLocations(AccountUserView):
-
-    def get(self, request, business_id):
-
-        # Return the user's staff record for this business
-        business_staff = BusinessStaff.objects.filter(
-            business_id = business_id,
-            user = request.user,
-        ).first()
-
-        if not business_staff:
-            return Response(
-                {
-                    'detail':
-                        'Business not found.'
-                },
-                status = status.HTTP_404_NOT_FOUND
-            )
-
-        locations = BusinessLocation.objects.filter(
-            business_id = business_id
-        )
-
-        serialized = BusinessLocationSerializer(
-            locations,
-            many = True
-        )
-
-        return Response(
-            serialized.data,
-            status = status.HTTP_200_OK
-        )
-
-
-class BusinessStaffList(AccountUserView):
-
-    def get(self, request, business_id):
-
-        # Return the user's staff record for this business
-        business_staff = BusinessStaff.objects.filter(
-            business_id = business_id,
-            user = request.user,
-        ).first()
-
-        if not business_staff:
-            return Response(
-                {
-                    'detail':
-                        'Business not found.'
-                },
-                status = status.HTTP_404_NOT_FOUND
-            )
-
-        staff = BusinessStaff.objects.filter(
-            business_id = business_id
-        )
-
-        serialized = BusinessStaffSerializer(
-            staff,
-            many = True
-        )
-
-        return Response(
-            serialized.data,
-            status = status.HTTP_200_OK
-        )
-
-
-class BusinessItems(AccountUserView):
-
-    def get(self, request, business_id):
-
-        # Return the user's staff record for this business
-        business_staff = BusinessStaff.objects.filter(
-            business_id = business_id,
-            user = request.user,
-        ).first()
-
-        if not business_staff:
-            return Response(
-                {
-                    'detail':
-                        'Business not found.'
-                },
-                status = status.HTTP_404_NOT_FOUND
-            )
-
-        items = BusinessItem.objects.filter(
-            business_id = business_id
-        )
-
-        serialized = BusinessItemSerializer(
-            items,
-            many = True
-        )
-
-        return Response(
-            serialized.data,
             status = status.HTTP_200_OK
         )

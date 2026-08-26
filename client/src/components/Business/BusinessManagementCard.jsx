@@ -1,6 +1,17 @@
+import { useState } from "react"
+
 import Card from "react-bootstrap/Card"
 import Tab from "react-bootstrap/Tab"
 import Tabs from "react-bootstrap/Tabs"
+
+import Button from "../Button"
+
+import {
+    AddItemContainer,
+    AddLocationContainer,
+    AddRewardContainer,
+    AddRewardProgramContainer,
+} from "../AddNewContainers"
 
 import BusinessOverview from "./BusinessOverview"
 import BusinessInfo from "./BusinessInfo"
@@ -20,6 +31,17 @@ export default function BusinessManagementCard({
     setBusinessStaff,
 }) {
 
+    const [showAddLocation, setShowAddLocation] = useState(false)
+    const [showAddItem, setShowAddItem] = useState(false)
+    const [showAddRewardProgram, setShowAddRewardProgram] = useState(false)
+    const [showAddReward, setShowAddReward] = useState(false)
+
+    const [locationRefresh, setLocationRefresh] = useState(0)
+    const [itemRefresh, setItemRefresh] = useState(0)
+    const [rewardProgramRefresh, setRewardProgramRefresh] = useState(0)
+    const [rewardRefresh, setRewardRefresh] = useState(0)
+
+
     return (
 
         <Card className = "mb-4">
@@ -28,7 +50,7 @@ export default function BusinessManagementCard({
 
                 <Tabs
                     defaultActiveKey = "overview"
-                    className = "mb-4"
+                    className = "mb-4 flex-nowrap"
                 >
 
                     <Tab
@@ -55,9 +77,39 @@ export default function BusinessManagementCard({
                         eventKey = "locations"
                         title = "Locations"
                     >
+
+                        {!showAddLocation && (
+
+                            <div className = "d-flex justify-content-end mb-3">
+
+                                <Button
+                                    type = "button"
+                                    onClick = {
+                                        () => setShowAddLocation(true)
+                                    }
+                                >
+                                    Add Location
+                                </Button>
+
+                            </div>
+
+                        )}
+
+                        {showAddLocation && (
+
+                            <AddLocationContainer
+                                businessId = {businessId}
+                                setShowAddLocation = {setShowAddLocation}
+                                setLocationRefresh = {setLocationRefresh}
+                            />
+
+                        )}
+
                         <BusinessLocations
                             businessId = {businessId}
+                            locationRefresh = {locationRefresh}
                         />
+
                     </Tab>
 
                     <Tab
@@ -73,27 +125,117 @@ export default function BusinessManagementCard({
                         eventKey = "items"
                         title = "Items"
                     >
+
+                        {!showAddItem && (
+
+                            <div className = "d-flex justify-content-end mb-3">
+
+                                <Button
+                                    type = "button"
+                                    onClick = {
+                                        () => setShowAddItem(true)
+                                    }
+                                >
+                                    Add Item
+                                </Button>
+
+                            </div>
+
+                        )}
+
+                        {showAddItem && (
+
+                            <AddItemContainer
+                                businessId = {businessId}
+                                setShowAddItem = {setShowAddItem}
+                                setItemRefresh = {setItemRefresh}
+                            />
+
+                        )}
+
                         <BusinessItems
                             businessId = {businessId}
+                            itemRefresh = {itemRefresh}
                         />
+
                     </Tab>
 
                     <Tab
                         eventKey = "programs"
                         title = "Reward Programs"
                     >
+
+                        {!showAddRewardProgram && (
+
+                            <div className = "d-flex justify-content-end mb-3">
+
+                                <Button
+                                    type = "button"
+                                    onClick = {
+                                        () => setShowAddRewardProgram(true)
+                                    }
+                                >
+                                    Add Reward Program
+                                </Button>
+
+                            </div>
+
+                        )}
+
+                        {showAddRewardProgram && (
+
+                            <AddRewardProgramContainer
+                                businessId = {businessId}
+                                setShowAddRewardProgram = {setShowAddRewardProgram}
+                                setRewardProgramRefresh = {setRewardProgramRefresh}
+                            />
+
+                        )}
+
                         <BusinessRewardPrograms
                             businessId = {businessId}
+                            rewardProgramRefresh = {rewardProgramRefresh}
                         />
+
                     </Tab>
 
                     <Tab
                         eventKey = "rewards"
                         title = "Rewards"
                     >
+
+                        {!showAddReward && (
+
+                            <div className = "d-flex justify-content-end mb-3">
+
+                                <Button
+                                    type = "button"
+                                    onClick = {
+                                        () => setShowAddReward(true)
+                                    }
+                                >
+                                    Add Reward
+                                </Button>
+
+                            </div>
+
+                        )}
+
+                        {showAddReward && (
+
+                            <AddRewardContainer
+                                businessId = {businessId}
+                                setShowAddReward = {setShowAddReward}
+                                setRewardRefresh = {setRewardRefresh}
+                            />
+
+                        )}
+
                         <BusinessRewards
                             businessId = {businessId}
+                            rewardRefresh = {rewardRefresh}
                         />
+
                     </Tab>
 
                     <Tab

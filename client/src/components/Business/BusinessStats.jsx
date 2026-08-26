@@ -23,7 +23,7 @@ export default function BusinessStats({ stats }) {
                     className = "mb-3"
                 >
                     <BusinessStatsCard
-                        count = {stats.locations}
+                        count = {stats.locations ?? 0}
                         label = "Locations"
                     />
                 </Col>
@@ -35,7 +35,7 @@ export default function BusinessStats({ stats }) {
                     className = "mb-3"
                 >
                     <BusinessStatsCard
-                        count = {stats.staff}
+                        count = {stats.staff ?? 0}
                         label = "Staff"
                     />
                 </Col>
@@ -47,7 +47,7 @@ export default function BusinessStats({ stats }) {
                     className = "mb-3"
                 >
                     <BusinessStatsCard
-                        count = {stats.items}
+                        count = {stats.items ?? 0}
                         label = "Items"
                     />
                 </Col>

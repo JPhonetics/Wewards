@@ -25,6 +25,15 @@ def validate_last_name(value: str):
     )
     
     
+def validate_phone_number(value: str):
+    good_input = re.fullmatch(r'^\s*[0-9]+\s*$', value)
+    
+    if not good_input:
+        raise ValidationError(
+            message = "Please enter numbers only."
+        )
+    
+    
 def validate_staff_match_business(
     business,
     staff,
@@ -43,6 +52,16 @@ def validate_location_match_business(
         raise ValidationError(
             "Location must belong to the selected Business."
         )
+        
+        
+def validate_reward_program_match_business(
+    business,
+    reward_program,
+):
+    if business.id != reward_program.business_id:
+        raise ValidationError(
+            "Reward Program must belong to the selected Business."
+        )
     
     
 def validate_reward_match_program(
@@ -52,14 +71,5 @@ def validate_reward_match_program(
     if reward_program.id != reward.reward_program_id:
         raise ValidationError(
             "Reward must belong to the selected Reward Program."
-        )
-
-
-def validate_phone_number(value: str):
-    good_input = re.fullmatch(r'^\s*[0-9]+\s*$', value)
-    
-    if not good_input:
-        raise ValidationError(
-            message = "Please enter numbers only."
         )
         
