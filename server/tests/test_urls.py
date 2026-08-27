@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from apps.accounts.models import AccountUser
 
 
-# docker compose exec backend python manage.py test tests.test_urls
+# docker compose exec backend python manage.py test tests.test_users
 
 
 class UserTest(TestCase):
@@ -64,7 +64,7 @@ class UserTest(TestCase):
         
         
     def test_03_create_user_test_validators(self):
-        # Attempting to validators with bad entries
+        # Attempting to enter blank entries into required fields
         new_user = AccountUser(
             country = 'US1',
             first_name = 'Vash@',
@@ -104,13 +104,13 @@ class UserTest(TestCase):
         with self.assertRaises(ValidationError) as context:
             new_user.full_clean()
 
-        print(context.exception.message_dict)
+        # print(context.exception.message_dict)
 
         self.assertIn(
-            'Account user with this Email already exists.',
+            'User with this Email already exists.',
             context.exception.message_dict['email']
         )
         self.assertIn(
-            'Account user with this Phone number already exists.',
+            'User with this Phone Number already exists.',
             context.exception.message_dict['phone_number']
         )
