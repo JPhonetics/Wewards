@@ -14,14 +14,14 @@ def validate_name(value: str, message: str = "Please enter a valid name."):
 def validate_first_name(value: str):
     validate_name(
         value, 
-        "Please enter a valid first name"
+        "Please enter a valid first name."
     )
     
     
 def validate_last_name(value: str):
     validate_name(
         value, 
-        "Please enter a valid last name"
+        "Please enter a valid last name."
     )
     
     
