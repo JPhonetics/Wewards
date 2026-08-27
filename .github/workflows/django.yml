@@ -52,12 +52,12 @@ jobs:
 
       - name: Run Users Tests
         run: |
-          python manage.py tests.test_users
+          python manage.py test tests.test_users
 
       - name: Run URL Tests
         run: |
-          python manage.py tests.test_urls
+          python manage.py test tests.test_urls
 
       - name: Run Views Tests
         run: |
-          python manage.py test.test.views
+          python manage.py test test.test.views
