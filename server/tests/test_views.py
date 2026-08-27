@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from apps.accounts.models import AccountUser
 
 
-# docker compose exec backend python manage.py test tests.test_users
+# docker compose exec backend python manage.py test tests.test_views
 
 
 class UserTest(TestCase):
