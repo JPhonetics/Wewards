@@ -5,7 +5,7 @@ from apps.accounts.views import AccountUserView
 from apps.businesses.models import (
     BusinessStaff,
 )
-from apps.rewards.serializers import (
+from apps.rewards.serializers.rewards import (
     RewardSerializer,
 )
 from core.lookups import (

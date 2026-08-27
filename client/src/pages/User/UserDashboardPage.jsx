@@ -1,4 +1,5 @@
 import { useOutletContext } from "react-router-dom"
+import RewardsContainer from "../../components/User/Rewards/RewardsContainer"
 
 
 export default function UserDashboard() {
@@ -7,9 +8,9 @@ export default function UserDashboard() {
 
     return (
         <>
-        
             <h1>Welcome {user.first_name}</h1>
 
+            <RewardsContainer />
         </>
     )
 }

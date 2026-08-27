@@ -1,4 +1,5 @@
 import uuid
+from django.db.models import Q
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
         
@@ -247,6 +248,22 @@ def get_rewards_by_business(
     )
 
     return rewards
+
+
+def get_reward_programs_by_user(
+    user_id: uuid.UUID,
+):
+    from apps.rewards.models import RewardProgram
+
+    user = get_account_user(user_id)
+
+    reward_programs = RewardProgram.objects.filter(
+        Q(earned_rewards__user = user) | 
+        Q(adjusted_rewards__user = user) |
+        Q(redeemed_rewards__user = user)
+    ).distinct()
+
+    return reward_programs
     
 
 def get_reward_earning(

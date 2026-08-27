@@ -6,12 +6,24 @@ from core.lookups import *
 from core.validators import *
 
 
-def calculate_balance(
+POINTS = "Points"
+
+def _validate_points_program_type(reward_program):
+    if reward_program.program_type.name != POINTS:
+        
+        raise ValidationError(
+            "Reward Program Type is not Points."
+        )
+
+
+def points_calculate_balance(
     user_id: uuid.UUID, 
     reward_program_id: uuid.UUID,
 ):
-    user = get_account_user(user_id)
     reward_program = get_reward_program(reward_program_id)
+    _validate_points_program_type(reward_program)
+    
+    user = get_account_user(user_id)
     
     earnings = RewardEarning.objects.filter(
         user = user,
@@ -52,19 +64,30 @@ def calculate_balance(
     return earnings + adjustments - redemptions
 
 
-def eligible_rewards(
-    user_id: uuid.UUID, 
+def points_all_rewards(
     reward_program_id: uuid.UUID,
 ):
-    balance = calculate_balance(user_id, reward_program_id)
+    reward_program = get_reward_program(reward_program_id)
+    _validate_points_program_type(reward_program)
+
     rewards = get_rewards_by_program(reward_program_id)
+
+    return rewards
+
+
+def points_eligible_rewards(
+    user_id: uuid.UUID, 
+    reward_program_id: uuid.UUID,
+):    
+    balance = points_calculate_balance(user_id, reward_program_id)
+    rewards = points_all_rewards(reward_program_id)
     
     eligible_rewards = rewards.filter(amount_required__lte = balance)
     
     return eligible_rewards
 
 
-def award_points(
+def points_award(
     user_id: uuid.UUID, 
     reward_program_id: uuid.UUID,
     amount_earned: Decimal,
@@ -74,8 +97,10 @@ def award_points(
     receipt_total: Decimal = None,
     reward_id: uuid.UUID = None,
 ):
-    user = get_account_user(user_id)
     reward_program = get_reward_program(reward_program_id)
+    _validate_points_program_type(reward_program)
+    
+    user = get_account_user(user_id)
     
     location = (
         get_business_location(location_id) 
@@ -119,7 +144,7 @@ def award_points(
     return new_award
         
 
-def redeem_points(
+def points_redeem(
     user_id: uuid.UUID, 
     reward_program_id: uuid.UUID,
     location_id: uuid.UUID,
@@ -127,10 +152,12 @@ def redeem_points(
     reward_id: uuid.UUID,
 ):
     reward_program = get_reward_program(reward_program_id)
+    _validate_points_program_type(reward_program)
+    
     reward = get_reward(reward_id)
     validate_reward_match_program(reward_program, reward) 
     
-    balance = calculate_balance(user_id, reward_program_id)
+    balance = points_calculate_balance(user_id, reward_program_id)
         
     if balance < reward.amount_required:
         raise ValidationError (

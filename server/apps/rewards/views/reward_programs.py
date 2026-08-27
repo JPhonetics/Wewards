@@ -8,7 +8,7 @@ from apps.businesses.models import (
 from apps.rewards.models import (
     RewardProgramType,
 )
-from apps.rewards.serializers import (
+from apps.rewards.serializers.rewards import (
     RewardProgramTypeSerializer,
     RewardProgramSerializer,
 )

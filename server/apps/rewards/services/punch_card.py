@@ -16,7 +16,7 @@ def _validate_punch_card_program_type(reward_program):
         )
 
 
-def calculate_punch_card_progress_all(
+def punch_card_calculate_progress_all(
     user_id: uuid.UUID, 
     reward_program_id: uuid.UUID,
 ):
@@ -68,7 +68,7 @@ def calculate_punch_card_progress_all(
         for row in redemptions
     }
 
-    rewards = get_rewards_by_program(reward_program_id)
+    rewards = punch_card_all_rewards(reward_program_id)
 
     progress = []
 
@@ -88,18 +88,22 @@ def calculate_punch_card_progress_all(
             reward.id,
             Decimal("0"),
         )
+        
+        current_progress = (earned + adjusted - redeemed)
 
         progress.append({
-            "reward_id": reward.id,
-            "reward_name": reward.name,
-            "amount_required": reward.amount_required,
-            "progress": earned + adjusted - redeemed,
+            "reward":
+                reward,
+            "progress":
+                current_progress,
+            "eligible":
+                current_progress >= reward.amount_required,
         })
 
     return progress
 
 
-def calculate_punch_card_progress(
+def punch_card_calculate_progress(
     user_id: uuid.UUID, 
     reward_program_id: uuid.UUID,
     reward_id: uuid.UUID,
@@ -154,22 +158,36 @@ def calculate_punch_card_progress(
     return earnings + adjustments - redemptions
 
 
-def eligible_rewards(
+def punch_card_all_rewards(
+    reward_program_id: uuid.UUID,
+):
+    reward_program = get_reward_program(reward_program_id)
+    _validate_punch_card_program_type(reward_program)
+
+    rewards = get_rewards_by_program(reward_program_id)
+
+    return rewards
+
+
+def punch_card_eligible_rewards(
     user_id: uuid.UUID, 
     reward_program_id: uuid.UUID,
 ):
-    balances = calculate_punch_card_progress_all(user_id, reward_program_id)
+    progress = punch_card_calculate_progress_all(
+        user_id,
+        reward_program_id
+    )
     
     eligible_rewards = []
     
-    for reward in balances:
-        if reward["progress"] >= reward["amount_required"]:
+    for reward in progress:
+        if reward["eligible"]:
             eligible_rewards.append(reward)
 
     return eligible_rewards
 
 
-def award_punch_card(
+def punch_card_award(
     user_id: uuid.UUID, 
     reward_program_id: uuid.UUID,
     reward_id: uuid.UUID,
@@ -180,6 +198,8 @@ def award_punch_card(
     receipt_total: Decimal = None,
 ):
     reward_program = get_reward_program(reward_program_id)
+    _validate_punch_card_program_type(reward_program)
+    
     reward = get_reward(reward_id)
     validate_reward_match_program(reward_program, reward)
     
@@ -219,7 +239,7 @@ def award_punch_card(
     return new_award
         
 
-def redeem_punch_card(
+def punch_card_redeem(
     user_id: uuid.UUID, 
     reward_program_id: uuid.UUID,
     location_id: uuid.UUID,
@@ -227,10 +247,16 @@ def redeem_punch_card(
     reward_id: uuid.UUID,
 ):
     reward_program = get_reward_program(reward_program_id)
+    _validate_punch_card_program_type(reward_program)
+    
     reward = get_reward(reward_id)
     validate_reward_match_program(reward_program, reward) 
     
-    balance = calculate_punch_card_progress(user_id, reward_program_id, reward_id)
+    balance = punch_card_calculate_progress(
+        user_id,
+        reward_program_id,
+        reward_id
+    )
     
     if balance < reward.amount_required:
         raise ValidationError (
