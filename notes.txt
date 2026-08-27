@@ -61,3 +61,5 @@ Links for Review:
     - https://stackoverflow.com/questions/76132544/selecting-and-using-values-from-api-populated-dropdown-in-a-react-form
     - https://dev.to/kpnigalye/react-form-optimization-dynamic-data-fetching-for-select-fields-lp9
     - https://www.freecodecamp.org/news/how-to-build-dependent-dropdowns-in-react/
+    - https://rajpurohitdhanpal.medium.com/automating-django-tests-with-github-actions-a-beginners-ci-guide-55f82f651f1a
+    - https://www.digitalocean.com/community/questions/advanced-django-ci-cd-pipeline-with-github-actions

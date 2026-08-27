@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from apps.accounts.models import AccountUser
 
 
-# docker compose exec backend python manage.py test tests.test_users
+# docker compose exec backend python manage.py test tests.test_urls
 
 
 class UserTest(TestCase):
@@ -64,7 +64,7 @@ class UserTest(TestCase):
         
         
     def test_03_create_user_test_validators(self):
-        # Attempting to enter blank entries into required fields
+        # Attempting to validators with bad entries
         new_user = AccountUser(
             country = 'US1',
             first_name = 'Vash@',
@@ -76,10 +76,41 @@ class UserTest(TestCase):
         with self.assertRaises(ValidationError) as context:
             new_user.full_clean()
             
-        print(context.exception.message_dict)
+        # print(context.exception.message_dict)
         
         self.assertTrue('Value \'US1\' is not a valid choice.' in context.exception.message_dict['country'])
         self.assertTrue('Please enter a valid first name.' in context.exception.message_dict['first_name'])
         self.assertTrue('Please enter a valid last name.' in context.exception.message_dict['last_name'])
         self.assertTrue('Enter a valid email address.' in context.exception.message_dict['email'])
         self.assertTrue('Please enter numbers only.' in context.exception.message_dict['phone_number'])
+        
+        
+    def test_04_create_user_duplicate_unique_fields(self):
+        AccountUser.objects.create_user(
+            country = 'US',
+            first_name = 'Vash',
+            last_name = 'The Stampede',
+            email = 'vash@anime.com',
+            phone_number = '0000000000',
+        )
+        new_user = AccountUser(
+            country = 'US',
+            first_name = 'Ichigo',
+            last_name = 'Kurosaki',
+            email = 'vash@anime.com',
+            phone_number = '0000000000',
+            password = '1234qwer',
+        )
+        with self.assertRaises(ValidationError) as context:
+            new_user.full_clean()
+
+        print(context.exception.message_dict)
+
+        self.assertIn(
+            'Account user with this Email already exists.',
+            context.exception.message_dict['email']
+        )
+        self.assertIn(
+            'Account user with this Phone number already exists.',
+            context.exception.message_dict['phone_number']
+        )
