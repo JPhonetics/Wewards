@@ -10,6 +10,7 @@ from apps.businesses.serializers import (
     BusinessSerializer,
     BusinessStaffSerializer,
 )
+# from apps.billing.services import create_billing_customer
 from core.lookups import (
     get_rewards_by_business,
 )
@@ -28,12 +29,21 @@ class BusinessRegister(AccountUserView):
         )
 
         if serialized.is_valid():
-            serialized.save()
+            registration = serialized.save()
+
+            # The serializer is returning a dictionary
+            # We need to pull business out to send to Stripe to start the trial
+            business = registration['business']
+            
+            # billing_customer = create_billing_customer(business)
 
             return Response(
                 {
-                    'message':
-                        'Business registered successfully.'
+                    'message': 'Business registered successfully.',
+                    'business': {
+                        'id': business.id,
+                        'name': business.name
+                    }
                 },
                 status = status.HTTP_201_CREATED
             )

@@ -44,6 +44,14 @@ Notes:
     - Create lookup to validate user has access to business
 
 
+Stripe Notes:
+    - Product and Price tables come from Stripe API. We have 1 product to subscribed to our SaaS with 2 prices, a trial (month) then billed monthly for $25.
+    - Customer table identifies businesses that can be billed. Relationship to business rather than user to account for staff turnover.
+    - Subscription table holds the actual subscription info.
+    - When a business is registered for the first time, we create the Customer entry and trial record in Subscription
+    - Use https://api.stripe.com/v1/ with Bearer sk token in postman. v2 requires more info
+        - https://api.stripe.com/v1/prices
+
 
 Links for Review:
     - https://medium.com/@abhinav.dobhal/building-a-robust-service-layer-in-django-with-drf-3a3fc6a841c6
@@ -63,3 +71,7 @@ Links for Review:
     - https://www.freecodecamp.org/news/how-to-build-dependent-dropdowns-in-react/
     - https://rajpurohitdhanpal.medium.com/automating-django-tests-with-github-actions-a-beginners-ci-guide-55f82f651f1a
     - https://www.digitalocean.com/community/questions/advanced-django-ci-cd-pipeline-with-github-actions
+    - https://www.saaspegasus.com/guides/django-stripe-integrate/
+    - https://medium.com/@mathur.danduprolu/saas-applications-with-django-introduction-to-building-scalable-software-solutions-part-1-7-d0228bc3761b
+    - https://medium.com/@mathur.danduprolu/saas-applications-with-django-adding-subscription-billing-with-stripe-part-4-7-681898f8da67
+    - https://python.plainenglish.io/how-i-built-a-saas-application-with-django-and-stripe-in-14-days-818362f2e607
