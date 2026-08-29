@@ -10,7 +10,10 @@ from apps.businesses.serializers import (
     BusinessSerializer,
     BusinessStaffSerializer,
 )
-# from apps.billing.services import create_billing_customer
+from apps.billing.services import (
+    create_billing_customer,
+    create_trial_subscription,
+)
 from core.lookups import (
     get_rewards_by_business,
 )
@@ -32,14 +35,29 @@ class BusinessRegister(AccountUserView):
             registration = serialized.save()
 
             # The serializer is returning a dictionary
-            # We need to pull business out to send to Stripe to start the trial
+            # We need to pull business out to create the Stripe billing customer
             business = registration['business']
             
-            # billing_customer = create_billing_customer(business)
+            billing_customer = create_billing_customer(business)
+            
+            """
+            Testing: Create a business and execute the following
+            
+            docker compose exec backend python manage.py shell
+            from djstripe.models import Customer, Subscription
+            customer = Customer.objects.last()
+            customer
+            subscription = Subscription.objects.last()
+            subscription
+            subscription.status
+            subscription.trial_end
+            """
+            subscription = create_trial_subscription(billing_customer)
 
             return Response(
                 {
                     'message': 'Business registered successfully.',
+                    'trial_end': subscription.trial_end,
                     'business': {
                         'id': business.id,
                         'name': business.name

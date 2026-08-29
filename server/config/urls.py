@@ -24,6 +24,8 @@ def connection(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/accounts/', include('apps.accounts.urls')),
+    path('api/v1/billing/', include('apps.billing.urls')),
     path('api/v1/businesses/', include('apps.businesses.urls')),
     path('api/v1/rewards/', include('apps.rewards.urls')),
+    path('stripe/', include('djstripe.urls', namespace = 'djstripe')),
 ]

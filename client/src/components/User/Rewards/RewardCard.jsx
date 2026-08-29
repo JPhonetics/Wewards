@@ -1,5 +1,5 @@
 import Card from "react-bootstrap/Card"
-import Button from "../../Button"
+import Button from "../../Buttons"
 
 
 export default function RewardCard({

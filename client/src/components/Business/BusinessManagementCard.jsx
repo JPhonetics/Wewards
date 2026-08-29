@@ -4,7 +4,7 @@ import Card from "react-bootstrap/Card"
 import Tab from "react-bootstrap/Tab"
 import Tabs from "react-bootstrap/Tabs"
 
-import Button from "../Button"
+import Button from "../Buttons"
 
 import {
     AddItemContainer,

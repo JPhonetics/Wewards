@@ -3,7 +3,7 @@ import { useState } from "react"
 import Card from "react-bootstrap/Card"
 import Form from "react-bootstrap/Form"
 
-import Button from "../Button"
+import Button from "../Buttons"
 import { BusinessItemForm } from "../Forms"
 
 import { postBusinessItems } from "../../api/BusinessesAPI"
