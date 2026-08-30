@@ -3,12 +3,17 @@ from django.core.exceptions import ValidationError
 from apps.accounts.models import AccountUser
 
 
-# docker compose exec backend python manage.py test tests.test_users
+# docker compose exec backend python manage.py test tests.test_models
+
+"""
+## Goal: Ensure model methods, validation, creation, and model relationships (on_delete) are working as expected.
+"""
 
 
-class UserTest(TestCase):
+class TestModels(TestCase):
     
     def test_01_create_user(self):
+        """ Expected to pass """
         # Create user with good data
         new_user = AccountUser(
             country = 'US',
@@ -26,6 +31,7 @@ class UserTest(TestCase):
             
             
     def test_02_create_user_using_manager(self):
+        """ Expected to pass """
         # Create user using custom manager
         new_user = AccountUser.objects.create_user(
             country = 'US',
@@ -42,6 +48,7 @@ class UserTest(TestCase):
         
         
     def test_03_create_user_blank_entries(self):
+        """ Expected to fail """
         # Attempting to enter blank entries into required fields
         new_user = AccountUser(
             country = '',
@@ -63,7 +70,8 @@ class UserTest(TestCase):
         self.assertTrue('This field cannot be blank.' in context.exception.message_dict['phone_number'])
         
         
-    def test_03_create_user_test_validators(self):
+    def test_04_create_user_test_validators(self):
+        """ Expected to fail """
         # Attempting to enter blank entries into required fields
         new_user = AccountUser(
             country = 'US1',
@@ -85,7 +93,9 @@ class UserTest(TestCase):
         self.assertTrue('Please enter numbers only.' in context.exception.message_dict['phone_number'])
         
         
-    def test_04_create_user_duplicate_unique_fields(self):
+    def test_05_create_user_duplicate_unique_fields(self):
+        """ Expected to fail """
+        # Attempting to enter another user with the same email and phone number
         AccountUser.objects.create_user(
             country = 'US',
             first_name = 'Vash',

@@ -1,116 +1,127 @@
-from django.test import TestCase
-from django.core.exceptions import ValidationError
-from apps.accounts.models import AccountUser
+import uuid
+from django.test import SimpleTestCase
+from django.urls import reverse, resolve, NoReverseMatch
+
+from apps.accounts.urls import *
+from apps.billing.urls import *
+from apps.businesses.urls import *
+from apps.rewards.urls import *
 
 
-# docker compose exec backend python manage.py test tests.test_users
+# docker compose exec backend python manage.py test tests.test_urls
+
+"""
+## Goal: Ensure the API endpoints resolve correctly and point to the expected views.
+"""
 
 
-class UserTest(TestCase):
-    
-    def test_01_create_user(self):
-        # Create user with good data
-        new_user = AccountUser(
-            country = 'US',
-            first_name = 'Vash',
-            last_name = 'The Stampede',
-            email = 'vash@anime.com',
-            phone_number = '0000000000',
-            password = '1234qwer',
-        )
-        new_user.full_clean()
-        
-        self.assertIsNotNone(new_user)
-        self.assertEqual(new_user.first_name, 'Vash')
-        self.assertEqual(new_user.email, 'vash@anime.com')
-            
-            
-    def test_02_create_user_using_manager(self):
-        # Create user using custom manager
-        new_user = AccountUser.objects.create_user(
-            country = 'US',
-            first_name = 'Vash',
-            last_name = 'The Stampede',
-            email = 'vash@anime.com',
-            phone_number = '0000000000',
-            password = '1234qwer',
-        )
-        new_user.full_clean()
-        
-        self.assertEqual(AccountUser.objects.count(), 1)
-        self.assertEqual(new_user.country, 'US')
-        
-        
-    def test_03_create_user_blank_entries(self):
-        # Attempting to enter blank entries into required fields
-        new_user = AccountUser(
-            country = '',
-            first_name = '',
-            last_name = '',
-            email = '',
-            phone_number = '',
-            password = '1234qwer',
-        )
-        with self.assertRaises(ValidationError) as context:
-            new_user.full_clean()
-            
-        # print(context.exception.message_dict)
-        
-        self.assertTrue('This field cannot be blank.' in context.exception.message_dict['country'])
-        self.assertTrue('This field cannot be blank.' in context.exception.message_dict['first_name'])
-        self.assertTrue('This field cannot be blank.' in context.exception.message_dict['last_name'])
-        self.assertTrue('This field cannot be blank.' in context.exception.message_dict['email'])
-        self.assertTrue('This field cannot be blank.' in context.exception.message_dict['phone_number'])
-        
-        
-    def test_03_create_user_test_validators(self):
-        # Attempting to enter blank entries into required fields
-        new_user = AccountUser(
-            country = 'US1',
-            first_name = 'Vash@',
-            last_name = 'The Stampede^',
-            email = 'vash@anime',
-            phone_number = '000000!0000',
-            password = '1234qwer',
-        )
-        with self.assertRaises(ValidationError) as context:
-            new_user.full_clean()
-            
-        # print(context.exception.message_dict)
-        
-        self.assertTrue('Value \'US1\' is not a valid choice.' in context.exception.message_dict['country'])
-        self.assertTrue('Please enter a valid first name.' in context.exception.message_dict['first_name'])
-        self.assertTrue('Please enter a valid last name.' in context.exception.message_dict['last_name'])
-        self.assertTrue('Enter a valid email address.' in context.exception.message_dict['email'])
-        self.assertTrue('Please enter numbers only.' in context.exception.message_dict['phone_number'])
-        
-        
-    def test_04_create_user_duplicate_unique_fields(self):
-        AccountUser.objects.create_user(
-            country = 'US',
-            first_name = 'Vash',
-            last_name = 'The Stampede',
-            email = 'vash@anime.com',
-            phone_number = '0000000000',
-        )
-        new_user = AccountUser(
-            country = 'US',
-            first_name = 'Ichigo',
-            last_name = 'Kurosaki',
-            email = 'vash@anime.com',
-            phone_number = '0000000000',
-            password = '1234qwer',
-        )
-        with self.assertRaises(ValidationError) as context:
-            new_user.full_clean()
+class TestURLs(SimpleTestCase):
 
-        # print(context.exception.message_dict)
+    def test_01_account_user_sign_up(self):
+        """ Expected to pass """
+        # Takes in the URL name from urls.py, returns path
+        # Use when making a request to an endpoint
+        url = reverse('account_signup')
 
-        self.assertIn(
-            'User with this Email already exists.',
-            context.exception.message_dict['email']
-        )
-        self.assertIn(
-            'User with this Phone Number already exists.',
-            context.exception.message_dict['phone_number']
-        )
+        # Takes in URL path, returns information about the matched URL
+        # Use when checking a URL points to the correct view
+        resolved_url = resolve(url)
+
+        # print(url)
+        # print(resolved_url)
+        # print(resolved_url.route)
+        
+        # .func.view_class returns the View defined in urls.py
+        # print(resolved_url.func.view_class)
+        
+        self.assertEqual(resolved_url.url_name, 'account_signup')
+        self.assertEqual(resolved_url.route, 'api/v1/accounts/signup/')
+        self.assertTrue(resolved_url.func.view_class is AccountUserSignup)
+
+
+    def test_02_business_register(self):
+        """ Expected to pass """
+        # Takes in the URL name from urls.py, returns path
+        # Use when making a request to an endpoint
+        url = reverse('business_register')
+
+        # Takes in URL path, returns information about the matched URL
+        # Use when checking a URL points to the correct view
+        resolved_url = resolve(url)
+
+        # print(url)
+        # print(resolved_url)
+        # print(resolved_url.route)
+        
+        # .func.view_class returns the View defined in urls.py
+        # print(resolved_url.func.view_class)
+
+        self.assertEqual(resolved_url.url_name, 'business_register')
+        self.assertEqual(resolved_url.route, 'api/v1/businesses/register/')
+        self.assertTrue(resolved_url.func.view_class is BusinessRegister)
+        
+        
+    def test_03_business_location_with_two_uuids(self):
+        """ Expected to pass """
+        # Create UUIDs to pass into the URL
+        business_id = uuid.uuid4()
+        location_id = uuid.uuid4()
+
+        # Pass both UUIDs into the path parameters
+        url = reverse(
+            'business_location_detail',
+            kwargs = {'business_id': business_id, 'location_id': location_id})
+
+        # Resolve the URL and check the passed UUIDs
+        resolved_url = resolve(url)
+
+        # print(url)
+        # print(resolved_url)
+        # print(resolved_url.route)
+        # print(resolved_url.kwargs)
+        
+        # .func.view_class returns the View defined in urls.py
+        # print(resolved_url.func.view_class)
+        
+        self.assertEqual(resolved_url.url_name, 'business_location_detail')
+        self.assertEqual(resolved_url.route, 'api/v1/businesses/<uuid:business_id>/locations/<uuid:location_id>/')
+        self.assertEqual(resolved_url.kwargs['business_id'], business_id)
+        self.assertEqual(resolved_url.kwargs['location_id'], location_id)
+        self.assertTrue(resolved_url.func.view_class is BusinessLocationDetail)
+
+
+    def test_04_reward_with_uuid(self):
+        """ Expected to pass """
+        # Create a UUID to pass into the URL
+        business_id = uuid.uuid4()
+        
+        # Takes in the URL name from urls.py, returns path
+        # Leverage kwargs to test path parameters
+        # Use when making a request to an endpoint
+        url = reverse('rewards', kwargs = {'business_id': business_id})
+
+        # Takes in URL path, returns information about the matched URL
+        # Use when checking a URL points to the correct view
+        resolved_url = resolve(url)
+
+        # print(url)
+        # print(resolved_url)
+        # print(resolved_url.route)
+        # print(resolved_url.kwargs)
+        
+        # .func.view_class returns the View defined in urls.py
+        # print(resolved_url.func.view_class)
+
+        self.assertEqual(resolved_url.url_name, 'rewards')
+        self.assertEqual(resolved_url.route, 'api/v1/rewards/<uuid:business_id>/rewards/')
+        self.assertEqual(resolved_url.kwargs['business_id'], business_id)
+        self.assertTrue(resolved_url.func.view_class is RewardList)
+
+
+    def test_05_billing_subscription(self):
+        """ Expected to fail """
+        # Takes in the URL name from urls.py, returns path
+        # Leverage kwargs to test path parameters
+        # business_id expects a UUID, passing an integer should fail
+        with self.assertRaises(NoReverseMatch):
+            reverse('billing_subscription', kwargs = {'business_id': 4})
