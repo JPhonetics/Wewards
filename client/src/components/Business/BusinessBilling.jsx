@@ -3,7 +3,10 @@ import { useEffect, useState } from "react"
 import Button from "../Buttons"
 import ListGroup from "react-bootstrap/ListGroup"
 
-import { billingProducts } from "../../api/BillingAPI"
+import {
+    billingProducts,
+    subscribeBusiness,
+} from "../../api/BillingAPI"
 
 
 export default function BusinessBilling({
@@ -16,6 +19,7 @@ export default function BusinessBilling({
 
         const loadBilling = async () => {
 
+            // Get all active Stripe products and prices
             const response = await billingProducts()
 
             if (response) {
@@ -26,6 +30,21 @@ export default function BusinessBilling({
         loadBilling()
 
     }, [])
+
+
+    const handleSubscribe = async (priceId) => {
+
+        // Send the selected Stripe Price ID to Django
+        const response = await subscribeBusiness(
+            businessId,
+            priceId,
+        )
+
+        // Django returns the Stripe Checkout URL
+        // Redirect the browser to Stripe
+        window.location.href = response.checkout_url
+    }
+
 
     return (
 
@@ -55,17 +74,18 @@ export default function BusinessBilling({
                                     {price.unit_amount}
                                 </div>
 
+                                <Button
+                                    type = "button"
+                                    onClick = {() => handleSubscribe(price.id)}
+                                >
+                                    Subscribe
+                                </Button>
+
                             </div>
 
                         ))}
 
                     </div>
-
-                    <Button
-                        type = "submit"
-                    >
-                        Subscribe
-                    </Button>
 
                 </ListGroup.Item>
 

@@ -81,7 +81,9 @@ export default function RegisterBusinessPage() {
             setBusinessStaff(staff)
         }
 
-        navigate("/business/dashboard")
+        const businessId = registeredBusiness.business.id
+
+        navigate(`/business/${businessId}`)
     }
 
     return (

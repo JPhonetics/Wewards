@@ -1,4 +1,8 @@
+import { redirect } from "react-router-dom"
+
 import { api, errorMessage } from "./api"
+import { requireLogin } from "./AccountsAPI"
+import { getBusinessBilling } from "./BillingAPI"
 
 
 export const BusinessRegistration = async (registration) => {
@@ -37,6 +41,43 @@ export const BusinessRegistration = async (registration) => {
         alert(errorMessage(error))
         return null
     }
+}
+
+
+// blocks a business route if the business does not have
+// an active subscription or trial
+export const requireSubscription = async ({ params }) => {
+
+    try {
+
+        const billing = await getBusinessBilling(
+            params.businessId
+        )
+
+        if (
+            billing?.status === "active" ||
+            billing?.status === "trialing"
+        ) {
+            return null
+        }
+
+    } catch (error) { 
+        // Needed this because of the business I created before Stripe
+        // It did not have a billing customer record
+        // I expected it to error and route to the no-subscription page
+    }
+    throw redirect(
+        `/business/${params.businessId}/no-subscription`
+    )
+}
+
+
+// Business route check - Requires login and active subscription
+export const requireBusinessAccess = async (args) => {
+
+    await requireLogin()
+
+    return requireSubscription(args)
 }
 
 

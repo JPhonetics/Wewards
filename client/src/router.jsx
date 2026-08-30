@@ -8,10 +8,12 @@ import UserProfilePage from './pages/User/UserProfilePage';
 import BusinessRegisterPage from './pages/BusinessRegisterPage';
 import BusinessDashboardPage from './pages/Business/BusinessDashboardPage'
 import BusinessPage from './pages/Business/BusinessPage'
+import NoSubscriptionPage from './pages/NoSubscriptionPage'
 import ErrorPage from './pages/ErrorPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 import { requireLogin, redirectIfLoggedIn, userConfirmation } from './api/AccountsAPI';
+import { requireBusinessAccess } from './api/BusinessesAPI'
 
 
 const router = createBrowserRouter(
@@ -59,7 +61,11 @@ const router = createBrowserRouter(
         {
           path: "business/:businessId",
           element: <BusinessPage />,
-          loader: requireLogin,
+          loader: requireBusinessAccess,
+        },
+        {
+          path: "business/:businessId/no-subscription",
+          element: <NoSubscriptionPage />,
         },
         {
           path: '*',

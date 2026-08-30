@@ -9,7 +9,7 @@ from apps.businesses.serializers import (
     BusinessStaffSerializer,
 )
 from core.lookups import (
-    get_business_staff_by_user,
+    get_all_businesses_for_user,
 )
 
 
@@ -17,7 +17,7 @@ class BusinessStaffInfo(AccountUserView):
 
     def get(self, request):
 
-        business_staff = get_business_staff_by_user(
+        business_staff = get_all_businesses_for_user(
             request.user.id
         )
 

@@ -178,5 +178,7 @@ DJSTRIPE_FOREIGN_KEY_TO_FIELD = "id"
 # By default, DJSTRIPE uses AUTH_USER_MODEL
 DJSTRIPE_SUBSCRIBER_MODEL = 'businesses.Business'
 
+CLIENT_URL = os.environ.get("CLIENT_URL", "http://localhost:5173")
+
 # STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY')
 # STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')

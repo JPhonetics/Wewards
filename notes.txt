@@ -75,3 +75,7 @@ Links for Review:
     - https://medium.com/@mathur.danduprolu/saas-applications-with-django-introduction-to-building-scalable-software-solutions-part-1-7-d0228bc3761b
     - https://medium.com/@mathur.danduprolu/saas-applications-with-django-adding-subscription-billing-with-stripe-part-4-7-681898f8da67
     - https://python.plainenglish.io/how-i-built-a-saas-application-with-django-and-stripe-in-14-days-818362f2e607
+    - https://er-raj-aryan.medium.com/csrf-token-explained-how-to-secure-your-frontend-react-next-js-and-backend-django-laravel-aac8229835ce
+    - https://fractalideas.com/blog/making-react-and-django-play-well-together-single-page-app-model/
+    - https://www.paritydeals.com/blog/how-to-integrate-stripe-with-django-a-step-by-step-guide-2025/
+    - https://medium.com/@parthramanuj64/stripe-payment-gateway-integration-with-django-rest-framework-and-react-js-3f82eaf8ace0

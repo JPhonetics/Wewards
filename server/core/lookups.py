@@ -54,7 +54,8 @@ def get_business_location(
     return business_location
     
     
-def get_business_staff_by_user(
+# Returns all businesses a user belongs to
+def get_all_businesses_for_user(
     user_id: uuid.UUID,
 ):
     from apps.businesses.models import BusinessStaff
@@ -66,15 +67,36 @@ def get_business_staff_by_user(
     )
 
     return business_staff
+ 
     
-    
-def get_business_staff(
+# Returns all staff belonging to that business
+def get_all_business_staff_for_business(
     business_staff_id: uuid.UUID,
 ):
     from apps.businesses.models import BusinessStaff
     
     try:
         business_staff = BusinessStaff.objects.get(id = business_staff_id)
+        
+    except BusinessStaff.DoesNotExist:
+        raise ValidationError(
+            "Business Staff does not exist."
+        )
+
+    return business_staff
+
+
+def get_business_staff_for_user(
+    business_id: uuid.UUID,
+    user_id: uuid.UUID,
+):
+    from apps.businesses.models import BusinessStaff
+    
+    try:
+        business_staff = BusinessStaff.objects.get(
+            business_id = business_id,
+            user_id = user_id,
+        )
         
     except BusinessStaff.DoesNotExist:
         raise ValidationError(
