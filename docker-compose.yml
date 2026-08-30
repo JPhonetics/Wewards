@@ -12,14 +12,14 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   backend:
-    user: "${UID}:${GID}"
+    # user: "${UID}:${GID}"
     build: ./server
     image: wewards_backend_image
     container_name: wewards_backend_container
     env_file:
       - ./server/.env
-    command: sh -c "python manage.py runserver 0.0.0.0:8000"
-    # command: sh -c "gunicorn wewards.wsgi --bind 0.0.0.0:8000 --reload"
+    # command: sh -c "python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "gunicorn config.wsgi --bind 0.0.0.0:8000"
     ports:
       - "8000:8000"
     volumes:

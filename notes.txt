@@ -83,3 +83,4 @@ Links for Review:
     - https://medium.com/@parthramanuj64/stripe-payment-gateway-integration-with-django-rest-framework-and-react-js-3f82eaf8ace0
     - https://www.geopostcodes.com/blog/google-maps-react-component/
     - https://github.com/googlemaps/js-api-loader?utm_source=chatgpt.com
+    - https://getautonoma.com/blog/django-cypress-testing-guide

@@ -41,6 +41,7 @@ function NavBar({
         <Navbar.Brand
           as = {Link}
           to = "/"
+          expand = "lg"
         >
           Wewards
         </Navbar.Brand>

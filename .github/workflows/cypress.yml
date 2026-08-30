@@ -1,10 +1,11 @@
-name: Cypress Tests
+name: React CI
 
-on: push
+on:
+  push:
 
 jobs:
   cypress-run:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
