@@ -32,7 +32,7 @@ function NavBar({
   return (
 
     <Navbar
-      bg = "dark"
+      bg = "primary"
       data-bs-theme = "dark"
       expand = "lg"
     >

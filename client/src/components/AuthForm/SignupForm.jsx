@@ -68,9 +68,11 @@ function SignupForm({ setUser }) {
         }
 
         const registerUser = await userSignup(signupUser)
+        console.log(registerUser)
         if (!registerUser) return
 
         const registeredUser = await userConfirmation()
+        console.log(registeredUser)
         if (!registeredUser) return
 
         setUser(registeredUser)

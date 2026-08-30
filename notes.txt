@@ -43,6 +43,7 @@ Notes:
     - Future me: research how to display the existing data in a dynamic table. searchable, filterable, and sortable.
     - Create lookup to validate user has access to business
     - Google AutoComplete doesn't work well with international addresses
+    - Cypress test on signing up a new user fails because the user already exists. need to research how to run only in test db
 
 
 Stripe Notes:
