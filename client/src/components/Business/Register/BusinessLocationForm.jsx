@@ -1,6 +1,8 @@
 import FloatingLabel from "react-bootstrap/FloatingLabel"
 import Form from "react-bootstrap/Form"
 
+import GoogleAddressAutoComplete from "../../Forms/GoogleAddressAutoComplete"
+
 
 export default function BusinessLocationForm({
     location,
@@ -33,6 +35,12 @@ export default function BusinessLocationForm({
                     required
                 />
             </FloatingLabel>
+
+            <div className = "mb-3">
+                <GoogleAddressAutoComplete
+                    setLocation = {setLocation}
+                />
+            </div>
 
             <FloatingLabel
                 controlId = "address_line_1"

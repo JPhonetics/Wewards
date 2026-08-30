@@ -50,9 +50,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Users Tests
+      - name: Run Models Tests
         run: |
-          python manage.py test tests.test_users
+          python manage.py test tests.test_models
 
       - name: Run URL Tests
         run: |

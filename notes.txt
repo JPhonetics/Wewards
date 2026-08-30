@@ -42,6 +42,7 @@ Notes:
     - Business Dashboard Stats does not update on state change.
     - Future me: research how to display the existing data in a dynamic table. searchable, filterable, and sortable.
     - Create lookup to validate user has access to business
+    - Google AutoComplete doesn't work well with international addresses
 
 
 Stripe Notes:
@@ -79,3 +80,5 @@ Links for Review:
     - https://fractalideas.com/blog/making-react-and-django-play-well-together-single-page-app-model/
     - https://www.paritydeals.com/blog/how-to-integrate-stripe-with-django-a-step-by-step-guide-2025/
     - https://medium.com/@parthramanuj64/stripe-payment-gateway-integration-with-django-rest-framework-and-react-js-3f82eaf8ace0
+    - https://www.geopostcodes.com/blog/google-maps-react-component/
+    - https://github.com/googlemaps/js-api-loader?utm_source=chatgpt.com
