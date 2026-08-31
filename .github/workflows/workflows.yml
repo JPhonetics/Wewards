@@ -19,7 +19,7 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_NAME: wewards_test
+          POSTGRES_DB: wewards_test
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         ports:
