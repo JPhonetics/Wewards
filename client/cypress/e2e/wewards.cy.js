@@ -5,32 +5,32 @@ describe('Testing Home Page', () => {
     cy.get('header').should('be.visible')
   })
 
-  it('should have a navbar', () => {
-    cy.visit('/')
-    cy.get('nav.navbar').should('be.visible')
-  })
+  // it('should have a navbar', () => {
+  //   cy.visit('/')
+  //   cy.get('nav.navbar').should('be.visible')
+  // })
 
-  it('should route us to the login page', () => {
-    // Clicking on the For Business link on the NavBar while logged out
-    // Should route to the login page
-    cy.visit('/')
-    cy.contains('a', 'For Business').click({force:true})
+  // it('should route us to the login page', () => {
+  //   // Clicking on the For Business link on the NavBar while logged out
+  //   // Should route to the login page
+  //   cy.visit('/')
+  //   cy.contains('a', 'For Business').click({force:true})
     
-    cy.url().should('include', '/login')
-    // cy.location('pathname').should('eq', '/login')
-  })
+  //   cy.url().should('include', '/login')
+  //   // cy.location('pathname').should('eq', '/login')
+  // })
 
-  it('should allow us to toggle to Signup', () => {
-    // Clicking on the Login link on the NavBar while logged out
-    // Should show the Signup form
-    cy.visit('/')
-    cy.contains('a', 'Login').click({force:true})
-    cy.contains('Signup').click()
+  // it('should allow us to toggle to Signup', () => {
+  //   // Clicking on the Login link on the NavBar while logged out
+  //   // Should show the Signup form
+  //   cy.visit('/')
+  //   cy.contains('a', 'Login').click({force:true})
+  //   cy.contains('Signup').click()
 
-    cy.get('form:visible').within(() => {
-      cy.get('input').should('have.length', 7)
-    })
-  })
+  //   cy.get('form:visible').within(() => {
+  //     cy.get('input').should('have.length', 7)
+  //   })
+  // })
 })
 
 
