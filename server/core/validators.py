@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 import re
 
+
 def validate_name(value: str, message: str = "Please enter a valid name."):
     forbidden_characters = re.search(r'[~@#$%^&*{}|:<>]', value)
     
@@ -9,18 +10,21 @@ def validate_name(value: str, message: str = "Please enter a valid name."):
             message = message
         )
 
+
 def validate_first_name(value: str):
     validate_name(
         value, 
-        "Please enter a valid first name"
+        "Please enter a valid first name."
     )
-
+    
+    
 def validate_last_name(value: str):
     validate_name(
         value, 
-        "Please enter a valid last name"
+        "Please enter a valid last name."
     )
-
+    
+    
 def validate_phone_number(value: str):
     good_input = re.fullmatch(r'^\s*[0-9]+\s*$', value)
     
@@ -28,3 +32,44 @@ def validate_phone_number(value: str):
         raise ValidationError(
             message = "Please enter numbers only."
         )
+    
+    
+def validate_staff_match_business(
+    business,
+    staff,
+): 
+    if business.id != staff.business_id:
+        raise ValidationError(
+            "Staff must belong to the selected Business."
+        )
+    
+    
+def validate_location_match_business(
+    business,
+    location,
+):
+    if business.id != location.business_id:
+        raise ValidationError(
+            "Location must belong to the selected Business."
+        )
+        
+        
+def validate_reward_program_match_business(
+    business,
+    reward_program,
+):
+    if business.id != reward_program.business_id:
+        raise ValidationError(
+            "Reward Program must belong to the selected Business."
+        )
+    
+    
+def validate_reward_match_program(
+    reward_program,
+    reward,
+):
+    if reward_program.id != reward.reward_program_id:
+        raise ValidationError(
+            "Reward must belong to the selected Reward Program."
+        )
+        

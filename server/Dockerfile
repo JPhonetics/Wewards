@@ -13,7 +13,7 @@ COPY . .
 EXPOSE 8000
 
 # For local development:
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 
 # For production environment
-# CMD ["gunicorn", "ecom_proj.wsgi", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "config.wsgi", "--bind", "0.0.0.0:8000"]
