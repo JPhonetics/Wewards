@@ -1,4 +1,4 @@
-name: Django CI
+name: CI
 
 on:
   push:
@@ -11,9 +11,9 @@ jobs:
     name: Test Suite
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: ./server
+    # defaults:
+    #   run:
+    #     working-directory: ./server
 
     services:
       postgres:
@@ -45,19 +45,31 @@ jobs:
         with:
           python-version: "3.14"
 
+      - name: Cypress run
+        uses: cypress-io/github-action@v7
+        with:
+          working-directory: client
+          build: npm run build
+          start: npm run dev
+          browser: chrome
+
       - name: Install dependencies
+        working-directory: ./server
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Run Models Tests
+        working-directory: ./server
         run: |
           python manage.py test tests.test_models
 
       - name: Run URL Tests
+        working-directory: ./server
         run: |
           python manage.py test tests.test_urls
 
       - name: Run Views Tests
+        working-directory: ./server
         run: |
           python manage.py test tests.test_views

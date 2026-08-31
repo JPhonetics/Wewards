@@ -1,20 +1,20 @@
-name: React CI
+# name: React CI
 
-on:
-  push:
+# on:
+#   push:
 
-jobs:
-  cypress-run:
-    runs-on: ubuntu-latest
+# jobs:
+#   cypress-run:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
 
-      - name: Cypress run
-        uses: cypress-io/github-action@v7
-        with:
-          working-directory: client
-          build: npm run build
-          start: npm run dev
-          browser: chrome
+#       - name: Cypress run
+#         uses: cypress-io/github-action@v7
+#         with:
+#           working-directory: client
+#           build: npm run build
+#           start: npm run dev
+#           browser: chrome
