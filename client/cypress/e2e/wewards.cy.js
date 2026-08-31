@@ -15,7 +15,9 @@ describe('Testing Home Page', () => {
     // Should route to the login page
     cy.visit('/')
     cy.contains('a', 'For Business').click({force:true})
-    cy.url().should('include', '/login')
+    
+    // cy.url().should('include', '/login')
+    cy.location('pathname').should('eq', '/login')
   })
 
   it('should allow us to toggle to Signup', () => {
